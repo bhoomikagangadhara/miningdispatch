@@ -457,7 +457,7 @@
         // ============================================================
         // DYNAMIC Lorry Owner HTML with Auto-Population logic
         // ============================================================
-        const OWNER_PAGE_HTML = `
+const OWNER_PAGE_HTML = `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -476,14 +476,25 @@
                 .label { font-size: 0.8rem; color: #777; font-weight: bold; text-transform: uppercase; }
                 .value { font-size: 0.9rem; color: #333; font-weight: 600; text-align: right; }
                 .qr-section { text-align: center; padding: 20px; background: #fdfdfd; border-top: 1px solid #eee; }
-                #qrcode { width: 150px; height: 150px; margin-bottom: 15px; }
+                #qrcode { width: 150px; height: 150px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; border: 3px solid transparent; }
+                #qrcode:hover { border-color: var(--primary); transform: scale(1.02); }
                 .btn-scan { background-color: var(--primary); color: white; border: none; padding: 14px 20px; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
                 .owner-panel { background: #e0e0e0; padding: 15px; text-align: center; border-top: 2px dashed #bbb; }
                 .btn-whatsapp { background-color: #25D366; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; font-size: 0.85rem; }
+                
                 .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.92); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; color: white; text-align: center; padding: 20px; box-sizing: border-box; }
                 .popup-box { background: white; color: #333; padding: 25px; border-radius: 15px; width: 85%; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: fadeIn 0.5s ease; }
+                
+                .id-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 200; padding: 20px; box-sizing: border-box; }
+                .id-card { background: white; color: #333; padding: 20px; border-radius: 20px; width: 280px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: slideUp 0.3s ease; position: relative; border-top: 8px solid var(--primary); }
+                .id-card img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; margin-bottom: 15px; }
+                .id-card h3 { margin: 0 0 5px 0; font-size: 1.2rem; color: #2c3e50; }
+                .id-card p { margin: 5px 0; font-size: 0.9rem; color: #666; }
+                .id-card .lorry-badge { background: #eee; color: #333; padding: 4px 10px; border-radius: 5px; font-weight: bold; font-size: 0.85rem; display: inline-block; margin-bottom: 10px; border: 1px solid #ddd; }
+                .id-card .btn-close { margin-top: 20px; background: #eee; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+
                 @keyframes fadeIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-                .status-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+                @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
                 .badge { background: var(--success); color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.75rem; display: inline-block; margin-top: 15px; }
             </style>
             </head>
@@ -496,51 +507,61 @@
                     <div class="details" style="border-top: 2px dashed #ddd;">
                         <p style="font-size: 0.7rem; color: #999; font-weight: bold; text-transform: uppercase; margin: 0 0 8px;">Trip Summary (Purchaser Accepted)</p>
                         <div class="row"><span class="label">Mining Site Name</span><span class="value" id="val-trip-mining">---</span></div>
+                        <!-- ADDED PICKUP LOCATION ROW -->
+                        <div class="row"><span class="label">Location Point</span><span class="value" id="val-trip-pickup">---</span></div>
+                        <div class="row"><span class="label">Drop Location</span><span class="value" id="val-trip-delivery">---</span></div>
                         <div class="row"><span class="label">Material Type</span><span class="value" id="val-trip-material">---</span></div>
-                        <div class="row"><span class="label">Delivery Location</span><span class="value" id="val-trip-delivery">---</span></div>
-                        <div class="row"><span class="label">Trip Schedule Date & Time</span><span class="value" id="val-trip-schedule">---</span></div>
+                       <div class="row"><span class="label">Trip Schedule Date & Time</span><span class="value" id="val-trip-schedule">---</span></div>
                         <div class="row"><span class="label">Quantity</span><span class="value" id="val-trip-qty">---</span></div>
                         <div class="row" style="border:none;"><span class="label">Number of Lorries</span><span class="value" id="val-trip-lorries">---</span></div>
                     </div>
                     <div class="qr-section">
-                        <img id="qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DemoLink" alt="QR Code">
+                        <img id="qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DemoLink" alt="QR Code" onclick="showDriverID()">
                         <button class="btn-scan" onclick="startWorkflow()"> SCAN QR CODE</button>
                     </div>
                     <div class="owner-panel">
                         <p style="font-size: 0.7rem; margin-bottom: 10px; color: #666;">OWNER CONTROL PANEL</p>
                         <a href="#" id="waLink" class="btn-whatsapp" target="_blank">Send Details to Driver via WhatsApp 💬</a>
                     </div>
+
                     <div class="overlay" id="overlay">
                         <div class="popup-box" id="popup">
-                            <span class="status-icon" id="icon">🚚</span>
                             <h3 id="title" style="margin: 0 0 10px 0;">Loading...</h3>
                             <p id="message" style="margin: 0; color: #666; line-height: 1.5;">Please wait</p>
                             <div id="badge-area"></div>
+                        </div>
+                    </div>
+
+                    <div class="id-overlay" id="id-overlay">
+                        <div class="id-card">
+                            <img id="id-photo" src="" alt="Driver">
+                            <div class="lorry-badge" id="id-lorry">Lorry No: ---</div>
+                            <h3 id="id-name">Loading...</h3>
+                            <p id="id-license">License: ---</p>
+                            <p id="id-phone">Phone: ---</p>
+                            <button class="btn-close" onclick="closeDriverID()">Close</button>
                         </div>
                     </div>
                 </div>
                 <script>
                     const APP_URL = "https://oretrack-demo.netlify.app"; 
                     window.onload = function() {
-                        // Bridge data read from localStorage — populated from the same dispatch
-                        // details entered on the site-management "Create Dispatch" screen.
                         const data = JSON.parse(localStorage.getItem('oretrack_bridge_data') || '{}');
                         if(data.mining) { document.getElementById('val-header-title').innerText = data.mining; }
                         if(data.material) { document.getElementById('val-header-sub').innerText = data.material; }
+                        
+                        // Map the combined Pickup Location from bridgeData
+                        if(data.pickupLocation) { document.getElementById('val-trip-pickup').innerText = data.pickupLocation; }
 
-                        // Trip Summary — populated from the purchaser's most recently
-                        // accepted/confirmed trip (see "My Dispatches"). Falls back to
-                        // placeholder text if no trip has been confirmed yet, so this
-                        // never throws and never blocks the QR code or WhatsApp link below.
                         if(data.tripConfirmed) {
                             document.getElementById('val-trip-mining').innerText = data.tripMining || '---';
-                            document.getElementById('val-trip-material').innerText = data.tripMaterial || '---';
                             document.getElementById('val-trip-delivery').innerText = data.tripDelivery || '---';
+                            document.getElementById('val-trip-material').innerText = data.tripMaterial || '---';
                             document.getElementById('val-trip-schedule').innerText = data.tripSchedule || '---';
                             document.getElementById('val-trip-qty').innerText = data.tripQty || '---';
                             document.getElementById('val-trip-lorries').innerText = data.tripLorries || '---';
                         } else {
-                            ['val-trip-mining','val-trip-material','val-trip-delivery','val-trip-schedule','val-trip-qty','val-trip-lorries'].forEach(id => {
+                            ['val-trip-mining','val-trip-pickup','val-trip-material','val-trip-delivery','val-trip-schedule','val-trip-qty','val-trip-lorries'].forEach(id => {
                                 const el = document.getElementById(id);
                                 if(el) el.innerText = 'No trip confirmed yet';
                             });
@@ -552,31 +573,40 @@
                         waLink.href = \`https://wa.me/?text=\${message}\`;
                         qrImg.src = \`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=\${APP_URL}\`;
                     };
+
+                    function showDriverID() {
+                        const data = JSON.parse(localStorage.getItem('oretrack_bridge_data') || '{}');
+                        document.getElementById('id-name').innerText = data.driverName || 'Unknown Driver';
+                        document.getElementById('id-license').innerText = 'License: ' + (data.driverLicense || 'N/A');
+                        document.getElementById('id-phone').innerText = 'Phone: ' + (data.driverPhone || 'N/A');
+                        document.getElementById('id-lorry').innerText = 'Lorry No: ' + (data.lorryNumber || 'N/A');
+                        document.getElementById('id-photo').src = data.driverPhoto || 'https://cdn-icons-png.flaticon.com/512/1692/1692167.png';
+                        document.getElementById('id-overlay').style.display = 'flex';
+                    }
+                    function closeDriverID() {
+                        document.getElementById('id-overlay').style.display = 'none';
+                    }
+
                     function startWorkflow() {
                         const overlay = document.getElementById('overlay');
                         const title = document.getElementById('title');
                         const message = document.getElementById('message');
-                        const icon = document.getElementById('icon');
                         const badgeArea = document.getElementById('badge-area');
                         overlay.style.display = 'flex';
                         title.innerText = "Gate Entry";
                         message.innerText = "Lorry entered site, needs loading";
-                        icon.innerText = "🏢";
                         badgeArea.innerHTML = '<div class="badge">At Site</div>';
                         setTimeout(() => {
                             title.innerText = "Dispatch Success";
                             message.innerText = "In transit to destination.";
-                            icon.innerText = "🛣️";
                             badgeArea.innerHTML = '<div class="badge" style="background:#3498db">In Transit</div>';
                             setTimeout(() => {
                                 title.innerText = "Arrival";
                                 message.innerText = "Entering destination site.";
-                                icon.innerText = "📍";
                                 badgeArea.innerHTML = '<div class="badge" style="background:#9b59b6">Arrived</div>';
                                 setTimeout(() => {
                                     title.innerText = "Unloading";
                                     message.innerText = "Dumping process started.";
-                                    icon.innerText = "🏗️";
                                     badgeArea.innerHTML = '<div class="badge" style="background:#e67e22">Dumping</div>';
                                     setTimeout(() => { alert("Workflow Complete."); overlay.style.display = 'none'; }, 4000);
                                 }, 3000);
@@ -587,56 +617,69 @@
             </body>
             </html>
         `;
- 
         // ============================================================
         // CORE APPLICATION LOGIC
         // ============================================================
  
-        function openOwnerDetailsTab() {
-            if (db.length === 0) {
-                alert("No dispatch data found. Please create a dispatch first.");
-                return;
-            }
-            const last = db[0]; // Grab the most recent dispatch
- 
-            // Construct the "Bridge Data" using exactly what was entered on the
-            // Create Dispatch screen — mining site, material, loading point, drop
-            // location, load quantity, schedule date/time, lorry type, and instructions.
-            const windowStr = `${last.startTime || '06:30'} - ${last.endTime || '18:00'}`;
-            const bridgeData = {
-                mining: last.miningSite,
-                material: last.type,
-                loading: [last.slot, last.loadingPoint].filter(Boolean).join(' - '),
-                dropLocation: last.dest,
-                quantity: last.totalQty ? `${last.totalQty} T` : '---',
-                scheduleDate: last.date,
-                scheduleTime: windowStr,
-                lorryType: last.lorryType,
-                instructions: last.instructions || ''
-            };
+ function openOwnerDetailsTab() {
+    if (db.length === 0) {
+        alert("No dispatch data found. Please create a dispatch first.");
+        return;
+    }
 
-            // Trip Summary — the purchaser's most recently accepted/confirmed trip
-            // (mining site name, material type, delivery location, trip schedule
-            // date & time, quantity, and number of lorries).
-            const trip = myTrips[0];
-            if(trip) {
-                bridgeData.tripConfirmed = true;
-                bridgeData.tripMining = trip.miningSite;
-                bridgeData.tripMaterial = trip.material;
-                bridgeData.tripDelivery = trip.deliveryLocation;
-                bridgeData.tripSchedule = `${trip.scheduleDate || ''} ${trip.scheduleWindow ? '(' + trip.scheduleWindow + ')' : ''}`.trim();
-                bridgeData.tripQty = `${trip.purchaseQty} T`;
-                bridgeData.tripLorries = `${trip.totalLorriesProvided}`;
-            } else {
-                bridgeData.tripConfirmed = false;
-            }
+    const last = db[0]; 
+    const freshMyTrips = JSON.parse(localStorage.getItem('oretrack_my_trips')) || [];
+    const trip = freshMyTrips[0]; 
 
-            localStorage.setItem('oretrack_bridge_data', JSON.stringify(bridgeData));
+    const windowStr = `${last.startTime || '06:30'} - ${last.endTime || '18:00'}`;
+    
+    const bridgeData = {
+        mining: last.miningSite || 'N/A',
+        material: last.type || 'N/A',
+        // We combine Site (slot) and Point into one clear Pickup Location
+        pickupLocation: [last.slot, last.loadingPoint].filter(Boolean).join(' - ') || 'N/A', 
+        dropLocation: last.dest || 'N/A',
+        quantity: last.totalQty ? `${last.totalQty} T` : '---',
+        scheduleDate: last.date || 'N/A',
+        scheduleTime: windowStr,
+        lorryType: last.lorryType || 'N/A',
+        instructions: last.instructions || ''
+    };
 
-            const blob = new Blob([OWNER_PAGE_HTML], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
-        }
+    // ADD DRIVER DETAILS HERE
+    // We look for the first driver associated with this dispatch to show on the scan
+       const firstAllocation = last.allocations ? last.allocations[0] : null;
+    const firstTruck = (firstAllocation && firstAllocation.trucks) ? firstAllocation.trucks[0] : null;
+    
+    if (firstTruck) {
+        bridgeData.driverName = firstTruck.driver || 'Unknown';
+        bridgeData.driverPhone = firstTruck.phone || 'N/A';
+        bridgeData.driverLicense = firstTruck.license || 'N/A';
+        bridgeData.driverPhoto = firstTruck.img || 'https://cdn-icons-png.flaticon.com/512/1692/1692167.png';
+        bridgeData.lorryNumber = firstTruck.id || 'N/A'; // Added Lorry Number here
+    }
+
+    if(trip) {
+        bridgeData.tripConfirmed = true;
+        bridgeData.tripMining = trip.miningSite;
+        bridgeData.tripMaterial = trip.material;
+        bridgeData.tripDelivery = trip.deliveryLocation;
+        bridgeData.tripSchedule = `${trip.scheduleDate || ''} ${trip.scheduleWindow ? '(' + trip.scheduleWindow + ')' : ''}`.trim();
+        bridgeData.tripQty = `${trip.purchaseQty} T`;
+        bridgeData.tripLorries = `${trip.totalLorriesProvided}`;
+    } else {
+        bridgeData.tripConfirmed = false;
+    }
+
+    let linkedHTML = OWNER_PAGE_HTML.replace(
+        'const data = JSON.parse(localStorage.getItem(\'oretrack_bridge_data\') || \'{}\');',
+        `const data = ${JSON.stringify(bridgeData)};`
+    );
+
+    const blob = new Blob([linkedHTML], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+}
 
         const BUYER_QUEUE = ['Appanna', 'Balaji', 'Chandrashekhar', 'Suresh Kumar'];
         // Lorries available at the pickup location that admin can call in to cover a shortage.
