@@ -630,7 +630,6 @@ const OWNER_PAGE_HTML = `
                         <div class="row"><span class="label">Material Type</span><span class="value" id="val-trip-material">---</span></div>
                         <div class="row"><span class="label">Grade</span><span class="value" id="val-trip-grade">---</span></div>
                        <div class="row"><span class="label">Trip Schedule Date & Time</span><span class="value" id="val-trip-schedule">---</span></div>
-                        <div class="row"><span class="label">Rate / Total Amount</span><span class="value" id="val-trip-amount">---</span></div>
                         <div class="row" style="border:none;"><span class="label">Lorry Number</span><span class="value" id="val-trip-lorry-number">---</span></div>
                     </div>
                     <div class="qr-section">
@@ -677,7 +676,6 @@ const OWNER_PAGE_HTML = `
                             document.getElementById('val-trip-material').innerText = data.tripMaterial || '---';
                             document.getElementById('val-trip-grade').innerText = data.tripGrade || '---';
                             document.getElementById('val-trip-schedule').innerText = data.tripSchedule || '---';
-                            document.getElementById('val-trip-amount').innerText = data.tripAmount || '---';
                             document.getElementById('val-trip-lorry-number').innerText = data.lorryNumber || '---';
                         } else {
                             ['val-trip-mining','val-trip-pickup','val-trip-material','val-trip-grade','val-trip-delivery','val-trip-schedule','val-trip-qty','val-trip-amount','val-trip-lorry-number'].forEach(id => {
