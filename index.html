@@ -28,6 +28,10 @@
         .radio-custom { appearance: none; width: 18px; height: 18px; border: 2px solid #444; border-radius: 50%; cursor: pointer; }
         .radio-custom:checked { background-color: #fff; border-color: #fff; box-shadow: inset 0 0 0 3px #1a1a1a; }
         .truck-count-label { background: #22c55e; color: black; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 50%; border: 2px solid white; }
+        .fleet2-category-btn.active { background-color: #b88a14; color: #000; border-color: #b88a14; }
+        .fleet2-vehicle-label { background: #18181b; border: 2px solid #4285F4; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 12px; white-space: nowrap; box-shadow: 0 4px 6px rgba(0,0,0,0.4); }
+        .fleet2-vehicle-label.alert { border-color: #ef4444; color: #fecaca; background-color: #450a0a; }
+        .fleet2-driver-btn.active { border-left: 3px solid #d4a017; background-color: #18181b; }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
         .animate-pulse-glow { animation: pulse-glow 2s infinite; }
     </style>
@@ -114,6 +118,7 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="mb-4"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Grade *</label><input type="text" id="f-grade" placeholder="e.g. 58% Fe" class="input-field w-full p-2.5 rounded-lg text-sm required"></div>
                             <div class="mb-4"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Quantity (Tons) *</label><div class="relative"><input type="number" id="f-qty" oninput="calculateLorries()" placeholder="e.g. 400" class="input-field w-full p-2.5 rounded-lg text-sm required"><span class="absolute right-3 top-2.5 text-zinc-600 text-xs font-bold">T</span></div></div>
                            <div class="mb-4"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Loading Point *</label><input type="text" id="f-slot" readonly placeholder="Auto-filled after mining site is confirmed" class="input-field w-full p-2.5 rounded-lg text-sm required bg-zinc-900/60 cursor-not-allowed"></div>
                            <div id="loading-point-container" class="mb-8 hidden">
@@ -166,6 +171,7 @@
                                 </div>
                                 <div class="grid grid-cols-2 gap-x-8 gap-y-5 text-xs">
                                     <div><p class="text-zinc-500 uppercase text-[10px] mb-1">Ore Type</p><p id="r-type" class="font-bold text-white"></p></div>
+                                    <div><p class="text-zinc-500 uppercase text-[10px] mb-1">Grade</p><p id="r-grade" class="font-bold text-white"></p></div>
                                     <div><p class="text-zinc-500 uppercase text-[10px] mb-1">Loading Point</p><p id="r-loading-point" class="font-bold text-white"></p></div>
                                     <div><p class="text-zinc-500 uppercase text-[10px] mb-1">Quantity</p><p id="r-qty" class="font-bold text-white"></p></div>
                                     <div><p class="text-zinc-500 uppercase text-[10px] mb-1">Loading Slot</p><p id="r-slot" class="font-bold text-white"></p></div>
@@ -216,7 +222,7 @@
  
                 <!-- FLEET STATUS PAGE -->
                 <section id="page-fleet-status" class="page-section hidden">
-                    <h2 class="text-2xl font-bold mb-8">FLEET STATUS</h2>
+                    <h2 class="text-2xl font-bold mb-8"> STATUS</h2>
                     <div class="card overflow-hidden rounded-xl">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm">
@@ -225,6 +231,93 @@
                                 </thead>
                                 <tbody id="fleet-status-body" class="divide-y divide-zinc-800"></tbody>
                             </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FLEET STATUS 2 PAGE — Live GPS Tracking -->
+                <section id="page-fleet-status-2" class="page-section hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">FLEET STATUS  · LIVE GPS TRACKING</h2>
+                        <div class="flex items-center gap-2 bg-zinc-900 px-3 py-1.5 rounded-full border border-zinc-800">
+                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            <span class="text-[10px] font-bold uppercase text-zinc-400">System Live</span>
+                        </div>
+                    </div>
+
+                    <div class="card p-4 rounded-xl mb-6">
+                        <label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Track by Truck Number</label>
+                        <div class="flex gap-3">
+                            <input type="text" id="fleet2-search-input" placeholder="e.g. KA 134" class="input-field flex-1 p-2.5 rounded-lg text-sm">
+                            <button onclick="searchFleet2Truck()" class="btn-gold px-6 rounded-lg text-sm font-bold">Track</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- LEFT: category + driver list + speed -->
+                        <div class="lg:col-span-3 space-y-4">
+                            <div class="card p-4 rounded-xl">
+                                <p class="text-zinc-500 uppercase text-[10px] font-bold mb-3 tracking-widest text-center">Lorry Category</p>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="switchFleet2Category('tipper')" id="fleet2-btn-tipper" class="fleet2-category-btn border border-zinc-700 py-2 px-2 rounded-lg text-[11px] font-bold transition-all">TIPPER</button>
+                                    <button onclick="switchFleet2Category('civil')" id="fleet2-btn-civil" class="fleet2-category-btn border border-zinc-700 py-2 px-2 rounded-lg text-[11px] font-bold transition-all">CIVIL</button>
+                                </div>
+                            </div>
+                            <div class="card p-4 rounded-xl">
+                                <p class="text-zinc-500 uppercase text-[10px] font-bold mb-3 tracking-widest text-center">Drivers & Trucks</p>
+                                <div id="fleet2-driver-list" class="flex flex-col gap-2 max-h-72 overflow-y-auto"></div>
+                            </div>
+                            <div class="card p-6 rounded-xl">
+                                <p class="text-zinc-500 uppercase text-[10px] font-bold mb-3 tracking-widest">Current Speed</p>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="fleet2-speed-val" class="text-5xl font-bold text-white">0</span>
+                                    <span class="text-lg text-zinc-500 font-medium">km/h</span>
+                                </div>
+                                <div class="mt-4 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                    <div id="fleet2-speed-bar" class="h-full bg-blue-500 transition-all duration-500" style="width:0%"></div>
+                                </div>
+                                <p class="text-[10px] text-zinc-600 mt-2">Limit: <span id="fleet2-speed-limit">--</span> km/h</p>
+                            </div>
+                        </div>
+
+                        <!-- MIDDLE: map -->
+                        <div class="lg:col-span-6 relative">
+                            <div id="fleet2-gps-map" style="height:520px;" class="w-full rounded-2xl border border-zinc-800"></div>
+                            <div class="absolute top-4 left-4 z-[1000] bg-zinc-900/90 p-2.5 rounded-lg border border-zinc-700 flex items-center gap-2">
+                                <span id="fleet2-status-indicator" class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                <span id="fleet2-gps-status-text" class="text-[10px] font-bold uppercase text-zinc-400">GPS Signal OK</span>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: trip info -->
+                        <div class="lg:col-span-3">
+                            <div class="card p-6 rounded-xl">
+                                <h3 class="text-zinc-500 uppercase text-[10px] font-bold mb-4 tracking-widest">Trip Information</h3>
+                                <div class="bg-zinc-900/60 p-4 rounded-xl border border-zinc-800 mb-4">
+                                    <p class="text-[10px] font-bold text-zinc-500 uppercase mb-1">Driver</p>
+                                    <p id="fleet2-trip-driver" class="text-base font-bold text-white">-</p>
+                                    <p class="text-[10px] font-bold text-zinc-500 uppercase mt-2 mb-1">Truck Number</p>
+                                    <p id="fleet2-trip-truck" class="text-sm font-bold text-yellow-500">-</p>
+                                </div>
+                                <div class="flex items-center gap-3 px-1 mb-4">
+                                    <div class="flex flex-col items-center gap-1">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+                                        <div class="w-0.5 h-8 bg-zinc-700"></div>
+                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                                    </div>
+                                    <div class="flex flex-col gap-3 text-xs">
+                                        <div><p class="text-[10px] font-bold text-zinc-500 uppercase">From</p><p id="fleet2-trip-from" class="font-semibold text-white">-</p></div>
+                                        <div><p class="text-[10px] font-bold text-zinc-500 uppercase">To</p><p id="fleet2-trip-to" class="font-semibold text-white">-</p></div>
+                                    </div>
+                                </div>
+                                <div class="pt-3 border-t border-zinc-800 mb-3">
+                                    <p class="text-[10px] font-bold text-zinc-500 uppercase mb-2">Route Status</p>
+                                    <span id="fleet2-trip-status" class="text-[10px] px-3 py-1 rounded-full font-bold uppercase bg-green-900/30 text-green-500">Unknown</span>
+                                </div>
+                                <div id="fleet2-action-panel" class="hidden">
+                                    <button onclick="blockFleet2Driver()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2"><i class="fa-solid fa-ban"></i> BLOCK DRIVER</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -257,6 +350,7 @@
                                     <p id="offer-loading-point" class="text-xs text-zinc-400 mb-4">--</p>
                                     <p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Material</p>
                                     <p class="text-lg font-bold text-yellow-500" id="offer-material">Iron Ore</p>
+                                    <p class="text-xs text-zinc-500" id="offer-grade">--</p>
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -313,6 +407,28 @@
                                 <div class="col-span-2 bg-yellow-900/10 p-2 rounded-lg border border-yellow-900/30">
                                     <p class="text-zinc-600 uppercase text-[9px] mb-1">Total Lorries Required (Site Management Requirement)</p>
                                     <p class="font-bold text-yellow-500 text-sm" id="alloc-site-req">0 Lorries</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card p-6 rounded-2xl border-green-900/30 bg-green-900/5">
+                            <h3 class="text-zinc-500 uppercase text-[10px] font-bold mb-4 tracking-widest flex items-center gap-2">
+                                <i class="fa-solid fa-indian-rupee-sign text-green-500"></i> Pricing
+                            </h3>
+                            <div class="flex flex-col gap-4">
+                                <div class="flex items-center justify-between bg-zinc-900/50 p-6 rounded-xl border border-zinc-800">
+                                    <div class="flex-1">
+                                        <p class="text-sm text-zinc-300 mb-1">Rate per Ton</p>
+                                        <p class="text-[10px] text-zinc-500 italic">Amount offered for 1 ton of ore.</p>
+                                    </div>
+                                    <div class="flex items-center gap-3 bg-black p-2 rounded-xl border border-zinc-800">
+                                        <span class="text-green-500 font-bold px-2">₹</span>
+                                        <input type="number" id="alloc-rate" oninput="calculateTotalAmount()" class="bg-transparent text-right font-bold text-white text-lg w-32 outline-none" placeholder="0.00">
+                                    </div>
+                                </div>
+                                <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl flex justify-between items-center">
+                                    <span class="text-xs text-zinc-400 uppercase font-bold">Total Amount <span class="text-zinc-600 text-[10px] font-normal">(Rate × Quantity)</span></span>
+                                    <span id="display-total-amount" class="text-xl font-bold text-green-500">₹ 0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -422,6 +538,7 @@
                         <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
                             <div><span class="text-zinc-500">ID:</span> <span id="det-id" class="text-white font-bold ml-1"></span></div>
                             <div><span class="text-zinc-500">Material:</span> <span id="det-type" class="text-white font-bold ml-1"></span></div>
+                            <div><span class="text-zinc-500">Grade:</span> <span id="det-grade" class="text-white font-bold ml-1"></span></div>
                             <div><span class="text-zinc-500">Total Quantity:</span> <span id="det-total" class="text-white font-bold ml-1"></span></div>
                             <div><span class="text-zinc-500">Lorry Type:</span> <span id="det-lorry-type" class="text-white font-bold ml-1"></span></div>
                             <div><span class="text-zinc-500">Loading Slot:</span> <span id="det-slot" class="text-white font-bold ml-1"></span></div>
@@ -511,9 +628,10 @@ const OWNER_PAGE_HTML = `
                         <div class="row"><span class="label">Location Point</span><span class="value" id="val-trip-pickup">---</span></div>
                         <div class="row"><span class="label">Drop Location</span><span class="value" id="val-trip-delivery">---</span></div>
                         <div class="row"><span class="label">Material Type</span><span class="value" id="val-trip-material">---</span></div>
+                        <div class="row"><span class="label">Grade</span><span class="value" id="val-trip-grade">---</span></div>
                        <div class="row"><span class="label">Trip Schedule Date & Time</span><span class="value" id="val-trip-schedule">---</span></div>
-                        <div class="row"><span class="label">Quantity</span><span class="value" id="val-trip-qty">---</span></div>
-                        <div class="row" style="border:none;"><span class="label">Number of Lorries</span><span class="value" id="val-trip-lorries">---</span></div>
+                        <div class="row"><span class="label">Rate / Total Amount</span><span class="value" id="val-trip-amount">---</span></div>
+                        <div class="row" style="border:none;"><span class="label">Lorry Number</span><span class="value" id="val-trip-lorry-number">---</span></div>
                     </div>
                     <div class="qr-section">
                         <img id="qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DemoLink" alt="QR Code" onclick="showDriverID()">
@@ -557,11 +675,12 @@ const OWNER_PAGE_HTML = `
                             document.getElementById('val-trip-mining').innerText = data.tripMining || '---';
                             document.getElementById('val-trip-delivery').innerText = data.tripDelivery || '---';
                             document.getElementById('val-trip-material').innerText = data.tripMaterial || '---';
+                            document.getElementById('val-trip-grade').innerText = data.tripGrade || '---';
                             document.getElementById('val-trip-schedule').innerText = data.tripSchedule || '---';
-                            document.getElementById('val-trip-qty').innerText = data.tripQty || '---';
-                            document.getElementById('val-trip-lorries').innerText = data.tripLorries || '---';
+                            document.getElementById('val-trip-amount').innerText = data.tripAmount || '---';
+                            document.getElementById('val-trip-lorry-number').innerText = data.lorryNumber || '---';
                         } else {
-                            ['val-trip-mining','val-trip-pickup','val-trip-material','val-trip-delivery','val-trip-schedule','val-trip-qty','val-trip-lorries'].forEach(id => {
+                            ['val-trip-mining','val-trip-pickup','val-trip-material','val-trip-grade','val-trip-delivery','val-trip-schedule','val-trip-qty','val-trip-amount','val-trip-lorry-number'].forEach(id => {
                                 const el = document.getElementById(id);
                                 if(el) el.innerText = 'No trip confirmed yet';
                             });
@@ -663,10 +782,11 @@ const OWNER_PAGE_HTML = `
         bridgeData.tripConfirmed = true;
         bridgeData.tripMining = trip.miningSite;
         bridgeData.tripMaterial = trip.material;
+        bridgeData.tripGrade = trip.grade || last.grade || 'N/A';
         bridgeData.tripDelivery = trip.deliveryLocation;
         bridgeData.tripSchedule = `${trip.scheduleDate || ''} ${trip.scheduleWindow ? '(' + trip.scheduleWindow + ')' : ''}`.trim();
         bridgeData.tripQty = `${trip.purchaseQty} T`;
-        bridgeData.tripLorries = `${trip.totalLorriesProvided}`;
+        bridgeData.tripAmount = trip.ratePerTon > 0 ? `₹${trip.ratePerTon}/T · ₹${(trip.totalAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : 'Not set';
     } else {
         bridgeData.tripConfirmed = false;
     }
@@ -787,7 +907,7 @@ const OWNER_PAGE_HTML = `
             } else {
                 document.getElementById('user-profile').innerHTML = `<span class="bg-indigo-900/50 text-indigo-300 text-[10px] px-2 py-1 rounded-full font-bold uppercase border border-indigo-500/30">Lessy</span><p class="mt-2 font-semibold text-sm text-white">Lessy</p><p class="text-xs text-zinc-500">Ramgarhi Mining • EA2141</p>`;
                 document.getElementById('header-avatar').innerText = 'Lessy';
-                document.getElementById('main-nav').innerHTML = `<a href="#" onclick="showPage('overview')" id="nav-overview" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-white bg-zinc-800/50"><i class="fa-solid fa-chart-pie w-5"></i> Overview</a><a href="#" onclick="showPage('create')" id="nav-create" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-plus-circle w-5"></i> Create Dispatch</a><a href="#" onclick="showPage('all-dispatches')" id="nav-all" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-list-check w-5"></i> All Dispatches</a><a href="#" onclick="showPage('fleet-status')" id="nav-fleet" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck-front w-5"></i> Fleet Status</a><a href="#" onclick="showPage('leases')" id="nav-leases" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-map-location-dot w-5"></i> Leases</a>`;
+                document.getElementById('main-nav').innerHTML = `<a href="#" onclick="showPage('overview')" id="nav-overview" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-white bg-zinc-800/50"><i class="fa-solid fa-chart-pie w-5"></i> Overview</a><a href="#" onclick="showPage('create')" id="nav-create" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-plus-circle w-5"></i> Create Dispatch</a><a href="#" onclick="showPage('all-dispatches')" id="nav-all" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-list-check w-5"></i> All Dispatches</a><a href="#" onclick="showPage('fleet-status')" id="nav-fleet" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck-front w-5"></i> Fleet Status</a><a href="#" onclick="showPage('fleet-status-2')" id="nav-fleet-2" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck w-5"></i> Fleet Status 2</a><a href="#" onclick="showPage('leases')" id="nav-leases" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-map-location-dot w-5"></i> Leases</a>`;
                 showPage('overview');
             }
         }
@@ -802,6 +922,7 @@ const OWNER_PAGE_HTML = `
             if(id === 'flash') initFlashOffer();
             if(id === 'admin') renderAdminPanel();
             if(id === 'fleet-status') renderFleetStatus();
+            if(id === 'fleet-status-2') initFleetStatus2();
             if(id === 'my-dispatches') renderMyDispatches();
             if(window.innerWidth < 768) toggleMenu();
         }
@@ -841,6 +962,7 @@ const OWNER_PAGE_HTML = `
         function prepareReview() {
             document.getElementById('r-mining-site').innerText = document.getElementById('f-mining-site').value;
             document.getElementById('r-type').innerText = document.getElementById('f-type').value;
+            document.getElementById('r-grade').innerText = document.getElementById('f-grade').value;
             document.getElementById('r-loading-point').innerText = document.getElementById('f-loading-point').value;
             document.getElementById('r-qty').innerText = document.getElementById('f-qty').value + ' T';
             document.getElementById('r-slot').innerText = document.getElementById('f-slot').value;
@@ -860,6 +982,7 @@ const OWNER_PAGE_HTML = `
                 id: 'DISP-' + Math.floor(1000 + Math.random() * 9000),
                 miningSite: document.getElementById('f-mining-site').value,
                 type: document.getElementById('f-type').value,
+                grade: document.getElementById('f-grade').value.trim(),
                 totalQty: totalQty,
                 remainingQty: totalQty,
                 dest: document.getElementById('f-dest').value,
@@ -882,7 +1005,7 @@ const OWNER_PAGE_HTML = `
             updateStats();
             document.getElementById('done-site').innerText = newDispatch.miningSite;
             document.getElementById('done-slot').innerText = document.getElementById('f-slot').value;
-            document.getElementById('done-mat').innerText = `${totalQty} T ${document.getElementById('f-type').value}`;
+            document.getElementById('done-mat').innerText = `${totalQty} T ${document.getElementById('f-type').value} (${newDispatch.grade})`;
             document.getElementById('done-date').innerText = newDispatch.date;
             document.getElementById('done-time').innerText = startTime;
             goStep('done');
@@ -900,6 +1023,7 @@ const OWNER_PAGE_HTML = `
             document.getElementById('offer-mining-site').innerText = offer.miningSite || 'Ramgarhi Mining';
             document.getElementById('offer-loading-point').innerText = offer.loadingPoint || '--';
             document.getElementById('offer-material').innerText = offer.type;
+            document.getElementById('offer-grade').innerText = offer.grade || '--';
             document.getElementById('offer-qty').innerHTML = `${offer.remainingQty} <span class="text-sm font-normal text-zinc-500">Tons</span>`;
             document.getElementById('offer-slot').innerText = offer.dest; 
             document.getElementById('offer-date').innerText = `${offer.date} | ${windowLabel}`;
@@ -964,10 +1088,11 @@ const OWNER_PAGE_HTML = `
         let ownedLorries = [];
         let extraAllocation = { }; 
         let activeLorryTypeSet = 'Tipper Lorry';
-        const CAP = { '6': 20, '10': 30, '12': 38, '14': 46, 'owned': 25 };
+        // Corrected per-lorry capacities (tons): 6-wheel=10T, 10-wheel=19T, 12-wheel=23T, 16-wheel=35T
+        const CAP = { '6': 10, '10': 19, '12': 23, '16': 35, 'owned': 25 };
         const LORRY_TYPE_SETS = {
-            'Tipper Lorry': ['6', '10', '12'],
-            'Civil Lorry': ['10', '12', '14']
+            'Tipper Lorry': ['6', '10', '12', '16'],
+            'Civil Lorry': ['6', '10', '12', '16']
         };
  
         function openAddOwnedLorry() { document.getElementById('add-owned-lorry-form').classList.remove('hidden'); }
@@ -1006,7 +1131,7 @@ const OWNER_PAGE_HTML = `
  
         function renderExtraLorryOptions() {
             const wheelKeys = LORRY_TYPE_SETS[activeLorryTypeSet] || LORRY_TYPE_SETS['Tipper Lorry'];
-            const icons = { '6': '🚚', '10': '🚛', '12': '🚚', '14': '🚛' };
+            const icons = { '6': '🚚', '10': '🚛', '12': '🚚', '16': '🚛' };
             document.getElementById('extra-lorry-type-label').innerText = `Options for ${activeLorryTypeSet}`;
             extraAllocation = {};
             wheelKeys.forEach(k => extraAllocation[k] = 0);
@@ -1036,8 +1161,19 @@ const OWNER_PAGE_HTML = `
             renderOwnedLorryList();
             activeLorryTypeSet = LORRY_TYPE_SETS[offer.lorryType] ? offer.lorryType : 'Tipper Lorry';
             renderExtraLorryOptions();
+
+            document.getElementById('alloc-rate').value = '';
+            calculateTotalAmount();
  
             calculateFleet();
+        }
+
+        function calculateTotalAmount() {
+            const rate = parseFloat(document.getElementById('alloc-rate').value) || 0;
+            const qtyText = document.getElementById('alloc-qty').innerText;
+            const qty = parseFloat(qtyText.replace(' T', '')) || 0;
+            const total = rate * qty;
+            document.getElementById('display-total-amount').innerText = '₹ ' + total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
         }
  
         function setLorryCount(key, val) {
@@ -1091,6 +1227,8 @@ const OWNER_PAGE_HTML = `
             const dispatch = db.find(d => d.dest === document.getElementById('alloc-drop').innerText);
             const lorriesRequired = dispatch ? (dispatch.totalLorriesRequired || 0) : 0;
             const lorriesShort = Math.max(0, lorriesRequired - totalLorries);
+            const ratePerTon = parseFloat(document.getElementById('alloc-rate').value) || 0;
+            const totalAmount = ratePerTon * qty;
  
             const trucks = ownedLorries.map(l => ({ id: l.number, driver: l.driver, license: l.license, phone: l.phone, img: 'https://cdn-icons-png.flaticon.com/512/1692/1692167.png', status: 'En Route' }));
             for(let i=1; i<=extraLorryCount(); i++){
@@ -1099,6 +1237,8 @@ const OWNER_PAGE_HTML = `
             const allocationRecord = {
                 buyer: buyerName,
                 tons: qty,
+                ratePerTon: ratePerTon,
+                totalAmount: totalAmount,
                 fleet: { owned: ownedLorries.length, ...extraAllocation },
                 ownedLorries: [...ownedLorries],
                 deliveredCapacity: deliveredCap,
@@ -1126,10 +1266,13 @@ const OWNER_PAGE_HTML = `
                     dispatchId: dispatch.id,
                     miningSite: dispatch.miningSite,
                     material: dispatch.type,
+                    grade: dispatch.grade,
                     deliveryLocation: dispatch.dest,
                     scheduleDate: dispatch.date,
                     scheduleWindow: windowLabel,
                     purchaseQty: qty,
+                    ratePerTon: ratePerTon,
+                    totalAmount: totalAmount,
                     ownedLorryCount: ownedLorries.length,
                     additionalLorries: { ...extraAllocation },
                     additionalLorryCount: extraLorryCount(),
@@ -1183,6 +1326,7 @@ const OWNER_PAGE_HTML = `
             const item = db[idx];
             document.getElementById('det-id').innerText = item.id;
             document.getElementById('det-type').innerText = item.type;
+            document.getElementById('det-grade').innerText = item.grade || 'N/A';
             document.getElementById('det-total').innerText = item.totalQty + ' T';
             document.getElementById('det-lorry-type').innerText = item.lorryType || 'N/A';
             document.getElementById('det-slot').innerText = item.slot || 'N/A';
@@ -1230,10 +1374,11 @@ const OWNER_PAGE_HTML = `
  
                     allocDiv.innerHTML += `
                         <div class="bg-zinc-800 p-4 rounded-xl border border-zinc-700">
-                            <div class="flex justify-between items-center mb-4 border-b border-zinc-700 pb-2">
+                            <div class="flex justify-between items-center mb-2 border-b border-zinc-700 pb-2">
                                 <span class="text-xs font-bold text-white">Driver/Fleet Allocation: ${alc.buyer}</span>
                                 <span class="text-yellow-500 text-xs font-bold">${alc.tons} T${alc.lorriesShort > 0 ? ` <span class="text-red-400 font-normal">(short ${alc.lorriesShort} lorries)</span>` : ''}</span>
                             </div>
+                            ${alc.ratePerTon > 0 ? `<p class="text-[10px] text-green-400 mb-3">Rate: ₹${alc.ratePerTon}/T · Total: ₹${(alc.totalAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>` : ''}
                             <p class="text-[10px] text-zinc-400 mb-2 uppercase font-bold">Vehicle Deployment Details</p>
                             <div class="space-y-2">${truckHtml}</div>
                         </div>`;
@@ -1397,6 +1542,167 @@ const OWNER_PAGE_HTML = `
             document.getElementById('fleet-status-body').innerHTML = buyers.map(b => `<tr class="border-b border-zinc-900"><td class="p-4">${b}</td><td class="p-4">12</td><td class="p-4">340 T</td><td class="p-4">120 T</td><td class="p-4 text-yellow-500">₹450/T</td></tr>`).join('');
         }
 
+        // ============================================================
+        // FLEET STATUS 2 — Live GPS Tracking
+        // ============================================================
+        const FLEET2_BASE = [15.1394, 76.8877]; // Ballari
+        const FLEET2_ROUTES = [
+            ['Sandur', [15.3500, 76.7000]],
+            ['Hospet', [15.2200, 76.5400]],
+            ['Tumkur', [13.3409, 77.1140]],
+            ['Bangalore', [12.9716, 77.5946]],
+            ['Davangere', [14.4644, 75.9218]],
+            ['Chitradurga', [14.2251, 76.3980]],
+            ['Hubli', [15.3647, 75.1240]],
+            ['Gadag', [15.4310, 75.6300]],
+            ['Koppal', [15.3500, 76.1548]],
+            ['Raichur', [16.2076, 77.3463]]
+        ];
+        // Base speeds by category: Tipper = 55 km/h, Civil = 75 km/h.
+        // Speed limits (assumed, since not specified): Tipper = 60 km/h, Civil = 80 km/h — anything
+        // over the limit for that category is flagged red as overspeeding.
+        const FLEET2_DRIVERS = [
+            { name: 'Abhishek',      truck: 'KA 134', category: 'tipper', speed: 55 },
+            { name: 'Gopal',         truck: 'KA 156', category: 'tipper', speed: 68 },
+            { name: 'Chetan',        truck: 'KA 178', category: 'tipper', speed: 55 },
+            { name: 'Darshan',       truck: 'KA 192', category: 'tipper', speed: 55 },
+            { name: 'Ishwar',        truck: 'KA 205', category: 'tipper', speed: 55 },
+            { name: 'Mahesh',        truck: 'KA 219', category: 'civil',  speed: 75 },
+            { name: 'Mahadeva',      truck: 'KA 233', category: 'civil',  speed: 75 },
+            { name: 'Chandrasekhar', truck: 'KA 247', category: 'civil',  speed: 93 },
+            { name: 'Devaraj',       truck: 'KA 261', category: 'civil',  speed: 75 },
+            { name: 'Rajasekhar',    truck: 'KA 275', category: 'civil',  speed: 75 }
+        ].map((d, i) => {
+            const [to, endCoord] = FLEET2_ROUTES[i];
+            const limit = d.category === 'tipper' ? 60 : 80;
+            const overspeed = d.speed > limit;
+            return {
+                ...d,
+                from: 'Ballari',
+                to: to,
+                start: FLEET2_BASE,
+                end: endCoord,
+                limit: limit,
+                gpsStatus: 'Active',
+                status: overspeed ? 'Overspeeding' : 'On Schedule',
+                color: overspeed ? 'red' : 'blue',
+                progress: (i % 5) * 0.15 + 0.05
+            };
+        });
+
+        let fleet2MapInstance = null, fleet2Markers = {}, fleet2RouteLine = null, fleet2ActiveDriver = null, fleet2Category = 'tipper';
+
+        function initFleetStatus2() {
+            if(!fleet2MapInstance) {
+                fleet2MapInstance = L.map('fleet2-gps-map', { zoomControl: false }).setView(FLEET2_BASE, 7);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(fleet2MapInstance);
+                FLEET2_DRIVERS.forEach(d => {
+                    const icon = L.divIcon({
+                        className: 'fleet2-vehicle-marker',
+                        html: `<div class="fleet2-vehicle-label ${d.color === 'red' ? 'alert' : ''}">${d.name}</div>`,
+                        iconSize: [80, 20], iconAnchor: [40, 10]
+                    });
+                    const marker = L.marker(d.start, { icon }).addTo(fleet2MapInstance);
+                    marker.on('click', () => selectFleet2Driver(d));
+                    fleet2Markers[d.truck] = marker;
+                });
+            }
+            switchFleet2Category(fleet2Category);
+        }
+
+        function moveFleet2Vehicles() {
+            if(Object.keys(fleet2Markers).length === 0) return;
+            FLEET2_DRIVERS.forEach(d => {
+                if(d.gpsStatus !== 'Active') return;
+                d.progress += 0.0015;
+                if(d.progress > 1) d.progress = 0;
+                const lat = d.start[0] + (d.end[0] - d.start[0]) * d.progress;
+                const lng = d.start[1] + (d.end[1] - d.start[1]) * d.progress;
+                const m = fleet2Markers[d.truck];
+                if(m) m.setLatLng([lat, lng]);
+            });
+        }
+
+        function switchFleet2Category(cat) {
+            fleet2Category = cat;
+            document.getElementById('fleet2-btn-tipper').classList.toggle('active', cat === 'tipper');
+            document.getElementById('fleet2-btn-civil').classList.toggle('active', cat === 'civil');
+            renderFleet2DriverList();
+            const first = FLEET2_DRIVERS.find(d => d.category === cat);
+            if(first) selectFleet2Driver(first);
+        }
+
+        function renderFleet2DriverList() {
+            const list = document.getElementById('fleet2-driver-list');
+            if(!list) return;
+            const items = FLEET2_DRIVERS.filter(d => d.category === fleet2Category);
+            list.innerHTML = items.map(d => `
+                <button onclick="selectFleet2DriverByTruck('${d.truck}')" class="fleet2-driver-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold border border-zinc-800 transition-all flex justify-between items-center ${fleet2ActiveDriver && fleet2ActiveDriver.truck === d.truck ? 'active' : 'hover:bg-zinc-900'}">
+                    <span class="text-white">${d.name}<br><span class="text-[9px] text-zinc-500">${d.truck}</span></span>
+                    <span class="text-[9px] font-bold ${d.color === 'red' ? 'text-red-500' : 'text-zinc-400'}">${d.speed} km/h</span>
+                </button>`).join('');
+        }
+
+        function selectFleet2DriverByTruck(truck) {
+            const d = FLEET2_DRIVERS.find(x => x.truck === truck);
+            if(d) selectFleet2Driver(d);
+        }
+
+        function selectFleet2Driver(d) {
+            fleet2ActiveDriver = d;
+            if(fleet2RouteLine) fleet2MapInstance.removeLayer(fleet2RouteLine);
+            fleet2RouteLine = L.polyline([d.start, d.end], { color: '#b88a14', weight: 4, opacity: 0.6, dashArray: '10, 10' }).addTo(fleet2MapInstance);
+
+            document.getElementById('fleet2-speed-val').innerText = d.speed;
+            document.getElementById('fleet2-speed-bar').style.width = `${Math.min(100, (d.speed / (d.limit * 1.5)) * 100)}%`;
+            document.getElementById('fleet2-speed-bar').className = `h-full transition-all duration-500 ${d.color === 'red' ? 'bg-red-500' : 'bg-blue-500'}`;
+            document.getElementById('fleet2-speed-limit').innerText = d.limit;
+
+            document.getElementById('fleet2-trip-driver').innerText = d.name;
+            document.getElementById('fleet2-trip-truck').innerText = d.truck;
+            document.getElementById('fleet2-trip-from').innerText = d.from;
+            document.getElementById('fleet2-trip-to').innerText = d.to;
+
+            const statusB = document.getElementById('fleet2-trip-status');
+            statusB.innerText = d.status;
+            statusB.className = `text-[10px] px-3 py-1 rounded-full font-bold uppercase ${d.color === 'red' ? 'bg-red-900/30 text-red-500' : 'bg-green-900/30 text-green-500'}`;
+
+            const indicator = document.getElementById('fleet2-status-indicator');
+            const statusText = document.getElementById('fleet2-gps-status-text');
+            indicator.className = `w-2 h-2 rounded-full ${d.gpsStatus === 'Active' ? 'bg-green-500' : 'bg-zinc-500'}`;
+            statusText.innerText = d.gpsStatus === 'Active' ? 'GPS Signal OK' : 'GPS Signal Lost';
+
+            document.getElementById('fleet2-action-panel').classList.toggle('hidden', d.color !== 'red');
+
+            renderFleet2DriverList();
+            const m = fleet2Markers[d.truck];
+            if(m && fleet2MapInstance) fleet2MapInstance.panTo(m.getLatLng());
+        }
+
+        function normalizeTruckNumber(v) { return (v || '').toUpperCase().replace(/\s+/g, ' ').trim(); }
+
+        function searchFleet2Truck() {
+            const raw = document.getElementById('fleet2-search-input').value;
+            const q = normalizeTruckNumber(raw).replace(/\s/g, '');
+            if(!q) return;
+            const found = FLEET2_DRIVERS.find(d => normalizeTruckNumber(d.truck).replace(/\s/g, '') === q);
+            if(!found) { alert(`No truck found with number "${raw}".`); return; }
+            if(found.category !== fleet2Category) {
+                fleet2Category = found.category;
+                document.getElementById('fleet2-btn-tipper').classList.toggle('active', fleet2Category === 'tipper');
+                document.getElementById('fleet2-btn-civil').classList.toggle('active', fleet2Category === 'civil');
+            }
+            selectFleet2Driver(found);
+            alert(`${found.truck} is assigned to ${found.name}.\nCurrent route: Ballari → ${found.to}.\nSpeed: ${found.speed} km/h${found.color === 'red' ? ' (OVERSPEEDING)' : ''}`);
+        }
+
+        function blockFleet2Driver() {
+            if(!fleet2ActiveDriver) return;
+            if(confirm(`Are you sure you want to block ${fleet2ActiveDriver.name} (${fleet2ActiveDriver.truck})?`)) {
+                alert(`⚠️ SYSTEM ACTION: ${fleet2ActiveDriver.name} (${fleet2ActiveDriver.truck}) has been blocked for 3 days due to overspeeding.`);
+            }
+        }
+
         // Renders the trip summary cards on the Purchaser's "My Dispatches" page.
         // Shows: mining site, material, delivery location, trip/schedule date,
         // purchase quantity, and the additional-lorry quantity entered before confirmation.
@@ -1427,9 +1733,11 @@ const OWNER_PAGE_HTML = `
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-y-5 gap-x-4 text-xs mb-4">
                         <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Mining Site Name</p><p class="font-bold text-white">${t.miningSite || 'N/A'}</p></div>
                         <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Material Type</p><p class="font-bold text-white">${t.material || 'N/A'}</p></div>
+                        <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Grade</p><p class="font-bold text-white">${t.grade || 'N/A'}</p></div>
                         <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Delivery Location</p><p class="font-bold text-white">${t.deliveryLocation || 'N/A'}</p></div>
                         <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Trip / Schedule Date</p><p class="font-bold text-white">${t.scheduleDate || 'N/A'} <span class="text-zinc-500 font-normal">(${t.scheduleWindow || ''})</span></p></div>
                         <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Purchase Quantity</p><p class="font-bold text-white">${t.purchaseQty} T</p></div>
+                        <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Rate / Total Amount</p><p class="font-bold text-green-500">${t.ratePerTon > 0 ? `₹${t.ratePerTon}/T · ₹${(t.totalAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}` : 'Not set'}</p></div>
                         <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Additional Lorries Entered</p><p class="font-bold text-white">${additionalLorryBreakdown(t)}</p></div>
                     </div>
                     <div class="flex items-center justify-between bg-zinc-900/50 p-3 rounded-xl border border-zinc-800 text-[11px]">
@@ -1462,10 +1770,11 @@ const OWNER_PAGE_HTML = `
             const tom = new Date(); tom.setDate(tom.getDate() + 1);
             document.getElementById('f-date').value = tom.toISOString().split('T')[0];
             updateStats(); renderRecent(); 
+            setInterval(moveFleet2Vehicles, 150);
             userRole = 'manager';
             document.getElementById('role-text').innerText = 'Switch to PURCHASER View';
             document.getElementById('user-profile').innerHTML = `<span class="bg-indigo-900/50 text-indigo-300 text-[10px] px-2 py-1 rounded-full font-bold uppercase border border-indigo-500/30">Site Management</span><p class="mt-2 font-semibold text-sm text-white">Site Management</p><p class="text-xs text-zinc-500">Ramgarhi Mining • EA2141</p>`;
-            document.getElementById('main-nav').innerHTML = `<a href="#" onclick="showPage('overview')" id="nav-overview" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-white bg-zinc-800/50"><i class="fa-solid fa-chart-pie w-5"></i> Overview</a><a href="#" onclick="showPage('create')" id="nav-create" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-plus-circle w-5"></i> Create Dispatch</a><a href="#" onclick="showPage('all-dispatches')" id="nav-all" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-list-check w-5"></i> All Dispatches</a><a href="#" onclick="showPage('fleet-status')" id="nav-fleet" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck-front w-5"></i> Fleet Status</a><a href="#" onclick="showPage('leases')" id="nav-leases" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-map-location-dot w-5"></i> Leases</a>`;
+            document.getElementById('main-nav').innerHTML = `<a href="#" onclick="showPage('overview')" id="nav-overview" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-white bg-zinc-800/50"><i class="fa-solid fa-chart-pie w-5"></i> Overview</a><a href="#" onclick="showPage('create')" id="nav-create" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-plus-circle w-5"></i> Create Dispatch</a><a href="#" onclick="showPage('all-dispatches')" id="nav-all" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-list-check w-5"></i> All Dispatches</a><a href="#" onclick="showPage('fleet-status')" id="nav-fleet" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck-front w-5"></i> Fleet Status</a><a href="#" onclick="showPage('fleet-status-2')" id="nav-fleet-2" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck w-5"></i> Fleet Status 2</a><a href="#" onclick="showPage('leases')" id="nav-leases" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-map-location-dot w-5"></i> Leases</a>`;
             showPage('overview');
         };
     </script>
