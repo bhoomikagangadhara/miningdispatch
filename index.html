@@ -466,20 +466,80 @@
                             </div>
                         </div>
  
-                        <div class="card p-6 rounded-2xl">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Number Of Lorrys</h3>
-                                <button onclick="openAddOwnedLorry()" class="btn-gold text-[11px] font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i class="fa-solid fa-plus text-[10px]"></i> Add Lorry</button>
-                            </div>
-                            <div id="add-owned-lorry-form" class="hidden bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 mb-4 space-y-3">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Lorry Number *</label><input type="text" id="ol-number" placeholder="e.g. KA-01-F1234" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
-                                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Driver Name *</label><input type="text" id="ol-driver" placeholder="e.g. Ramesh Kumar" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
-                                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Phone Number *</label><input type="tel" id="ol-phone" placeholder="e.g. 9876543210" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
-                                    <div class="hidden"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">License Number *</label><input type="text" id="ol-license" placeholder="e.g. DL-1420110012345" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
-                                  
-                                    
-                                </div>
+                       <!-- 1. TRIP SUMMARY & PRICING (ಹಳೆಯದರಂತೆ ಇರುತ್ತದೆ) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <!-- LEFT SIDE: OWNED LORRIES (ನೀವು ಸೆಲೆಕ್ಟ್ ಮಾಡಿರುವ ಲಾರಿಗಳು) -->
+    <div class="card p-6 rounded-2xl">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Owned Lorries</h3>
+            <button onclick="openAddOwnedLorry()" class="btn-gold text-[11px] font-bold py-2 px-4 rounded-lg flex items-center gap-2">
+                <i class="fa-solid fa-plus text-[10px]"></i> Add Lorry
+            </button>
+        </div>
+
+        <!-- Add Lorry Form -->
+        <div id="add-owned-lorry-form" class="hidden bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 mb-4 space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Lorry Number *</label><input type="text" id="ol-number" placeholder="e.g. KA-01-F1234" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
+                <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Driver Name *</label><input type="text" id="ol-driver" placeholder="e.g. Ramesh Kumar" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
+                <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Phone Number *</label><input type="tel" id="ol-phone" placeholder="e.g. 9876543210" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
+                <div class="hidden"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">License Number *</label><input type="text" id="ol-license" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
+            </div>
+            <div class="flex gap-3 pt-1">
+                <button onclick="closeAddOwnedLorry()" class="flex-1 bg-zinc-800 p-2.5 rounded-lg text-xs font-bold text-zinc-400">Cancel</button>
+                <button onclick="saveOwnedLorry()" class="flex-1 btn-gold p-2.5 rounded-lg text-xs font-bold">Save Lorry</button>
+            </div>
+        </div>
+
+        <div id="owned-lorry-list" class="space-y-2 mb-4 max-h-48 overflow-y-auto"></div>
+
+        <div class="flex items-center justify-between bg-zinc-900/50 p-4 rounded-xl border border-zinc-800">
+            <div><span class="text-xs text-zinc-400">Owned Count</span><p id="owned-count" class="font-bold text-sm text-white mt-1">0</p></div>
+            <div class="text-right">
+                <p class="text-zinc-600 uppercase text-[9px] mb-1">Owned Capacity</p>
+                <p id="owned-capacity" class="text-xl font-bold text-white">0 T</p>
+            </div>
+        </div>
+        
+        <!-- Gap Warning (ಎಡಭಾಗದಲ್ಲೇ ಇರುತ್ತದೆ) -->
+        <div id="capacity-warning" class="mt-4 p-3 bg-yellow-900/10 border border-yellow-900/40 rounded-xl text-yellow-600 text-xs flex items-center gap-2 hidden">
+            <i class="fa-solid fa-triangle-exclamation"></i> 
+            <span>Gap: <span id="gap-amount" class="font-bold">0 T</span></span>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE: ADDITIONAL LORRIES (ಹೆಚ್ಚುವರಿ ಲಾರಿಗಳು) -->
+    <div class="card p-6 rounded-2xl">
+        <h3 class="text-zinc-500 uppercase text-[10px] font-bold mb-4 tracking-widest">Additional Requirement</h3>
+        <p id="extra-lorry-type-label" class="text-[10px] text-zinc-600 mb-3"></p>
+        <div id="extra-lorry-options" class="space-y-3 max-h-64 overflow-y-auto pr-2">
+            <!-- Extra Lorry options will be injected here -->
+        </div>
+    </div>
+</div>
+
+<!-- BOTTOM SUMMARY: TOTAL CALCULATION (ಇದು ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಅಪ್‌ಡೇಟ್ ಆಗುತ್ತದೆ) -->
+<div class="card p-6 rounded-2xl border-yellow-900/30 bg-zinc-900/30">
+    <div class="grid grid-cols-3 gap-4 text-center">
+        <div>
+            <p class="text-zinc-600 uppercase text-[9px] font-bold mb-1">Total Lorries</p>
+            <!-- ಇಲ್ಲಿ 'Owned + Additional' ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಬರುತ್ತದೆ -->
+            <p id="total-lorries" class="text-xl font-bold text-white">0</p>
+        </div>
+        <div>
+            <p class="text-zinc-600 uppercase text-[9px] font-bold mb-1">Total Capacity</p>
+            <p id="total-cap" class="text-xl font-bold text-yellow-500">0 T</p>
+        </div>
+        <div>
+            <p class="text-zinc-600 uppercase text-[9px] font-bold mb-1">Required</p>
+            <p id="total-req" class="text-xl font-bold text-white">0 T</p>
+        </div>
+    </div>
+    <div id="final-shortage" class="hidden mt-4 text-center text-yellow-500 text-xs font-medium">
+        <i class="fa-solid fa-circle-info"></i> <span id="final-shortage-text"></span>
+    </div>
+</div>
                                 <div class="flex gap-3 pt-1">
                                     <button onclick="closeAddOwnedLorry()" class="flex-1 bg-zinc-800 p-2.5 rounded-lg text-xs font-bold text-zinc-400">Cancel</button>
                                     <button onclick="saveOwnedLorry()" class="flex-1 btn-gold p-2.5 rounded-lg text-xs font-bold">Save Lorry</button>
