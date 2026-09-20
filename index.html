@@ -123,9 +123,37 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="mb-4"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Grade *</label><input type="text" id="f-grade" placeholder="e.g. 58% Fe" class="input-field w-full p-2.5 rounded-lg text-sm required"></div>
-                            <div class="mb-4"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Quantity (Tons) *</label><div class="relative"><input type="number" id="f-qty" oninput="calculateLorries()" placeholder="e.g. 400" class="input-field w-full p-2.5 rounded-lg text-sm required"><span class="absolute right-3 top-2.5 text-zinc-600 text-xs font-bold">T</span></div></div>
-                           <div class="mb-4"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Loading Point *</label><input type="text" id="f-slot" readonly placeholder="Auto-filled after mining site is confirmed" class="input-field w-full p-2.5 rounded-lg text-sm required bg-zinc-900/60 cursor-not-allowed"></div>
+                          <div class="mb-4">
+    <label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Grade *</label>
+    <select id="f-grade" class="input-field w-full p-2.5 rounded-lg text-sm required">
+        <option value="">Select Grade</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+        <option value="45">45</option>
+        <option value="46">46</option>
+        <option value="47">47</option>
+        <option value="48">48</option>
+        <option value="49">49</option>
+        <option value="50">50</option>
+        <option value="51">51</option>
+        <option value="52">52</option>
+        <option value="53">53</option>
+        <option value="54">54</option>
+        <option value="55">55</option>
+        <option value="56">56</option>
+        <option value="57">57</option>
+        <option value="58">58</option>
+        <option value="59">59</option>
+        <option value="60">60</option>
+    </select>
+</div>
+   <div class="mb-4"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Quantity (Tons) *</label><div class="relative"><input type="number" id="f-qty" oninput="calculateLorries()" placeholder="e.g. 400" class="input-field w-full p-2.5 rounded-lg text-sm required"><span class="absolute right-3 top-2.5 text-zinc-600 text-xs font-bold">T</span></div></div>
+  <div class="mb-4"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Loading Point *</label><input type="text" id="f-slot" readonly placeholder="Auto-filled after mining site is confirmed" class="input-field w-full p-2.5 rounded-lg text-sm required bg-zinc-900/60 cursor-not-allowed"></div>
                            <div id="loading-point-container" class="mb-8 hidden">
                                <label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Loading Point Number *</label>
                                <select id="f-loading-point" class="input-field w-full p-2.5 rounded-lg text-sm">
