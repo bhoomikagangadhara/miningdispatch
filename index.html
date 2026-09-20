@@ -521,10 +521,19 @@
                                 <i class="fa-solid fa-circle-info"></i> <span id="final-shortage-text"></span>
                             </div>
                         </div>
-                        <div class="flex gap-4 pb-10">
-                            <button onclick="showPage('flash')" class="flex-1 py-4 rounded-xl bg-zinc-800 text-zinc-400 font-bold hover:bg-zinc-700 transition-all">Back</button>
-                            <button id="confirm-trip-btn" onclick="confirmFleetTrip()" class="flex-1 py-4 rounded-xl bg-red-900/30 text-red-500 border border-red-900/50 font-bold opacity-50 cursor-not-allowed transition-all" disabled>Confirm Trip</button>
-                        </div>
+                        <div id="confirm-trip-modal" class="modal-overlay hidden">
+    <div class="card max-w-sm w-full rounded-3xl p-8 text-center">
+        <div class="w-16 h-16 bg-yellow-500/20 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-circle-question text-3xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Confirm Trip?</h3>
+        <p class="text-zinc-400 text-sm mb-8">Are you sure you want to confirm this dispatch with the selected fleet and pricing?</p>
+        <div class="flex gap-3">
+            <button onclick="closeConfirmModal()" class="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-400 font-bold">Cancel</button>
+            <button onclick="executeFinalConfirmation()" class="flex-1 py-3 rounded-xl bg-yellow-600 text-black font-bold">Yes, Confirm</button>
+        </div>
+    </div>
+</div>
                     </div>
                 </section>
  
@@ -1263,84 +1272,139 @@ const OWNER_PAGE_HTML = `
             }
         }
  
-        function confirmFleetTrip() {
-            const offer = db.find(d => d.status === 'PENDING_OFFER' || d.status === 'PARTIALLY_Sourced');
-            const buyerName = offer ? offer.currentBuyer : 'Unknown';
- 
-            const qty = parseFloat(document.getElementById('alloc-qty').innerText.replace(' T', '')) || 0;
-            const reqTons = parseInt(document.getElementById('total-req').innerText) || 0;
-            const deliveredCap = ownedLorries.length * CAP.owned + extraLorryCapacity();
-            const totalLorries = ownedLorries.length + extraLorryCount();
-            const dispatch = db.find(d => d.dest === document.getElementById('alloc-drop').innerText);
-            const lorriesRequired = dispatch ? (dispatch.totalLorriesRequired || 0) : 0;
-            const lorriesShort = Math.max(0, lorriesRequired - totalLorries);
-            const ratePerTon = parseFloat(document.getElementById('alloc-rate').value) || 0;
-            const totalAmount = ratePerTon * qty;
- 
-            const trucks = ownedLorries.map(l => ({ id: l.number, driver: l.driver, license: l.license, phone: l.phone, img: 'https://cdn-icons-png.flaticon.com/512/1692/1692167.png', status: 'En Route' }));
-            for(let i=1; i<=extraLorryCount(); i++){
-                trucks.push({ id: `KA-01-F${1000+i}`, img: 'https://cdn-icons-png.flaticon.com/512/1692/1692167.png', status: 'En Route' });
-            }
-            const allocationRecord = {
-                buyer: buyerName,
-                tons: qty,
-                ratePerTon: ratePerTon,
-                totalAmount: totalAmount,
-                fleet: { owned: ownedLorries.length, ...extraAllocation },
-                ownedLorries: [...ownedLorries],
-                deliveredCapacity: deliveredCap,
-                shortfall: Math.max(0, reqTons - deliveredCap),
-                lorriesRequired: lorriesRequired,
-                lorriesProvided: totalLorries,
-                lorriesShort: lorriesShort,
-                trucks: trucks,
-                location: [15.10 + Math.random()*0.1, 76.60 + Math.random()*0.1]
-            };
-            if(dispatch) {
-                if(!dispatch.allocations) dispatch.allocations = [];
-                dispatch.allocations.push(allocationRecord);
-                dispatch.status = 'CONFIRMED';
-                localStorage.setItem('oretrack_final_db', JSON.stringify(db));
-            }
+ // ============================================================
+// NEW & CORRECTED FLEET CONFIRMATION LOGIC
+// ============================================================
 
-            // Build the Trip Summary shown on "My Dispatches": mining site, material,
-            // delivery location, trip/schedule date, purchase quantity, and the
-            // additional-lorry quantity that was entered before confirming.
-            if(dispatch) {
-                const windowLabel = `${dispatch.startTime || '06:30'} - ${dispatch.endTime || '18:00'}`;
-                const tripSummary = {
-                    tripId: 'TRIP-' + Math.floor(1000 + Math.random() * 9000),
-                    dispatchId: dispatch.id,
-                    miningSite: dispatch.miningSite,
-                    material: dispatch.type,
-                    grade: dispatch.grade,
-                    deliveryLocation: dispatch.dest,
-                    scheduleDate: dispatch.date,
-                    scheduleWindow: windowLabel,
-                    purchaseQty: qty,
-                    ratePerTon: ratePerTon,
-                    totalAmount: totalAmount,
-                    ownedLorryCount: ownedLorries.length,
-                    additionalLorries: { ...extraAllocation },
-                    additionalLorryCount: extraLorryCount(),
-                    totalLorriesProvided: totalLorries,
-                    lorriesRequired: lorriesRequired,
-                    lorriesShort: lorriesShort,
-                    buyer: buyerName,
-                    confirmedAt: Date.now()
-                };
-                myTrips.unshift(tripSummary);
-                localStorage.setItem('oretrack_my_trips', JSON.stringify(myTrips));
-            }
+// 1. ಬಟನ್ ಒತ್ತಿದಾಗ ಮೊದಲು ಈ ಫಂಕ್ಷನ್ ನಡೆಯುತ್ತದೆ (ಪಾಪ್-ಅಪ್ ತೆರೆಯಲು)
+function confirmFleetTrip() {
+    const confirmBtn = document.getElementById('confirm-trip-btn');
+    
+    // ಲಾರಿಗಳೇ ಇಲ್ಲದಿದ್ದರೆ ಅಥವಾ ಬಟನ್ ಡಿಸೇಬಲ್ ಆಗಿದ್ದರೆ ತಡೆಯುವುದು
+    if(!confirmBtn || confirmBtn.disabled) return;
 
-            if(lorriesShort > 0) {
-                alert(`Trip confirmed. You're bringing ${totalLorries} of the ${lorriesRequired} lorries required — short by ${lorriesShort}. The mining authority has been notified of this shortage.`);
-            } else {
-                alert("Congratulations, your trip is confirmed.");
-            }
-            refreshBuyerIdentity(); 
-            showPage('my-dispatches');
-        }
+    // ಪಾಪ್-ಅಪ್ ಮಾಡಲ್ ಅನ್ನು ತೋರಿಸುವುದು
+    openConfirmModal();
+}
+
+// 2. ಮಾಡಲ್ ಅನ್ನು ನಿಯಂತ್ರಿಸುವ ಫಂಕ್ಷನ್‌ಗಳು
+function openConfirmModal() {
+    document.getElementById('confirm-trip-modal').classList.remove('hidden');
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirm-trip-modal').classList.add('hidden');
+}
+
+// 3. ಪರ್ಚೇಸರ್ 'Yes, Confirm' ಒತ್ತಿದಾಗ ಮಾತ್ರ ಈ ಅಂತಿಮ ಫಂಕ್ಷನ್ ನಡೆಯುತ್ತದೆ
+function executeFinalConfirmation() {
+    closeConfirmModal(); // ಮೊದಲು ಮಾಡಲ್ ಮುಚ್ಚುವುದು
+
+    // ಪರ್ಚೇಸರ ಅಪ್ತಗಾಮಿ ಡೇಟಾವನ್ನು (Offer) ಪತ್ತೆಹಚ್ಚುವುದು
+    const offer = db.find(d => d.status === 'PENDING_OFFER' || d.status === 'PARTIALLY_Sourced');
+    if(!offer) {
+        alert("Error: No active offer found.");
+        return;
+    }
+
+    const buyerName = offer.currentBuyer || 'Unknown';
+
+    // ಇತ್ತೀಚಿನ ಅಪ್‌ಡೇಟ್ ಆಗಿರುವ ವ್ಯಾಲ್ಯೂಗಳನ್ನು ತಗೆದುಕೊಳ್ಳುವುದು
+    const qty = parseFloat(document.getElementById('alloc-qty').innerText.replace(' T', '')) || 0;
+    const reqTons = parseInt(document.getElementById('total-req').innerText) || 0;
+    const ratePerTon = parseFloat(document.getElementById('alloc-rate').value) || 0;
+    const totalAmount = ratePerTon * qty;
+    
+    // ಲಾರಿಗಳ ಮತ್ತು ಕೆಪಾಸಿಟಿಗಳ ಲೆಕ್ಕಾಚಾರ
+    const deliveredCap = (ownedLorries.length * CAP.owned) + extraLorryCapacity();
+    const totalLorriesProvided = ownedLorries.length + extraLorryCount();
+    
+    // ಲಾರಿಗಳ ಪಟ್ಟಿಯನ್ನು ಸಿದ್ಧಪಡಿಸುವುದು (Owned + Extra chosen)
+    const trucks = ownedLorries.map(l => ({ 
+        id: l.number, 
+        driver: l.driver, 
+        license: l.license, 
+        phone: l.phone, 
+        img: 'https://cdn-icons-png.flaticon.com/512/1692/1692167.png', 
+        status: 'En Route' 
+    }));
+
+    // ಶಾರ್ಟೇಜ್ ಫಿಲ್ ಮಾಡಲು ಪರ್ಚೇಸರ್ ಆರಿಸಿದ ಅಡಿಷನಲ್ ಲಾರಿಗಳನ್ನು ಸೇರಿಸುವುದು
+    for(let i = 1; i <= extraLorryCount(); i++) {
+        trucks.push({ 
+            id: `EXT-${i}-${activeLorryTypeSet.substring(0,3).toUpperCase()}`, 
+            img: 'https://cdn-icons-png.flaticon.com/512/1692/1692167.png', 
+            status: 'En Route' 
+        });
+    }
+
+    const lorriesRequired = offer.totalLorriesRequired || 0;
+    const lorriesShort = Math.max(0, lorriesRequired - totalLorriesProvided);
+
+    // ಅಲೋಕೇಶನ್ ರೆಕಾರ್ಡ್ ಸಿದ್ಧಪಡಿಸುವುದು
+    const allocationRecord = {
+        buyer: buyerName,
+        tons: qty,
+        ratePerTon: ratePerTon,
+        totalAmount: totalAmount,
+        fleet: { owned: ownedLorries.length, ...extraAllocation },
+        ownedLorries: [...ownedLorries],
+        deliveredCapacity: deliveredCap,
+        shortfall: Math.max(0, reqTons - deliveredCap),
+        lorriesRequired: lorriesRequired,
+        lorriesProvided: totalLorriesProvided,
+        lorriesShort: lorriesShort,
+        trucks: trucks,
+        location: [15.10 + Math.random()*0.1, 76.60 + Math.random()*0.1]
+    };
+
+    // ಅಸಲಿ ಡಿಸ್ಪ್ಯಾಚ್ ಅನ್ನು ಅಪ್‌ಡೇಟ್ ಮಾಡುವುದು (db)
+    if(offer.allocations) {
+        offer.allocations.push(allocationRecord);
+    } else {
+        offer.allocations = [allocationRecord];
+    }
+    offer.status = 'CONFIRMED';
+    localStorage.setItem('oretrack_final_db', JSON.stringify(db));
+
+    // ಪರ್ಚೇಸರ್‌ನ 'My Dispatches' ಗಾಗಿ ಸಮ್ಮರಿ ತಯಾರು ಮಾಡುವುದು
+    const windowLabel = `${offer.startTime || '06:30'} - ${offer.endTime || '18:00'}`;
+    const tripSummary = {
+        tripId: 'TRIP-' + Math.floor(1000 + Math.random() * 9000),
+        dispatchId: offer.id,
+        miningSite: offer.miningSite,
+        material: offer.type,
+        grade: offer.grade,
+        deliveryLocation: offer.dest,
+        scheduleDate: offer.date,
+        scheduleWindow: windowLabel,
+        purchaseQty: qty,
+        ratePerTon: ratePerTon,
+        totalAmount: totalAmount,
+        ownedLorryCount: ownedLorries.length,
+        additionalLorries: { ...extraAllocation },
+        additionalLorryCount: extraLorryCount(),
+        totalLorriesProvided: totalLorriesProvided,
+        lorriesRequired: lorriesRequired,
+        lorriesShort: lorriesShort,
+        buyer: buyerName,
+        confirmedAt: Date.now()
+    };
+
+    myTrips.unshift(tripSummary);
+    localStorage.setItem('oretrack_my_trips', JSON.stringify(myTrips));
+
+    // ಅಂತಿಮ ಯಶಸ್ಸಿನ ಸಂದೇಶ
+    if(lorriesShort > 0) {
+        alert(`Trip confirmed. You're bringing ${totalLorriesProvided} of the ${lorriesRequired} lorries required — short by ${lorriesShort}. The mining authority has been notified of this shortage.`);
+    } else {
+        alert("Congratulations, your trip is confirmed.");
+    }
+
+    // ಪೇಜ್ ಅಪ್‌ಡೇಟ್ ಮತ್ತು ರೀಫ್ರೆಶ್
+    refreshBuyerIdentity(); 
+    showPage('my-dispatches');
+}
  
         function getDispatchLorriesShort(item) {
             if(!item.allocations || item.allocations.length === 0) return 0;
