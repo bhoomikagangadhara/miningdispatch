@@ -476,7 +476,7 @@
                                     <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Lorry Number *</label><input type="text" id="ol-number" placeholder="e.g. KA-01-F1234" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
                                     <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Driver Name *</label><input type="text" id="ol-driver" placeholder="e.g. Ramesh Kumar" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
                                     <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Phone Number *</label><input type="tel" id="ol-phone" placeholder="e.g. 9876543210" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
-                                    <div class="hidden"><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">License Number *</label><input type="text" id="ol-license" placeholder="e.g. DL-1420110012345" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
+                                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">License Number *</label><input type="text" id="ol-license" placeholder="e.g. DL-1420110012345" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
                                   
                                     
                                 </div>
@@ -484,15 +484,23 @@
                                     <button onclick="closeAddOwnedLorry()" class="flex-1 bg-zinc-800 p-2.5 rounded-lg text-xs font-bold text-zinc-400">Cancel</button>
                                     <button onclick="saveOwnedLorry()" class="flex-1 btn-gold p-2.5 rounded-lg text-xs font-bold">Save Lorry</button>
                                 </div>
+
+                                
                             </div>
+                             <div class="flex justify-between items-center bg-zinc-900/80 p-3 rounded-xl border border-zinc-800 mb-4">
+    <div class="text-center flex-1 border-r border-zinc-800">
+        <p class="text-[9px] text-zinc-500 uppercase font-bold">Target Qty</p>
+        <p id="target-qty-display" class="text-sm font-bold text-white">--</p>
+    </div>
+    <div class="text-center flex-1">
+        <p class="text-[9px] text-zinc-500 uppercase font-bold">Required Lorries</p>
+        <p id="target-lorries-display" class="text-sm font-bold text-yellow-500">--</p>
+    </div>
+</div>
+
+                            
                             <div id="owned-lorry-list" class="space-y-2 mb-4"></div>
-                            <div class="flex items-center justify-between bg-zinc-900/50 p-4 rounded-xl border border-zinc-800">
-                                <div><span class="text-xs text-zinc-400">No. of lorries you own</span><p id="owned-count" class="font-bold text-sm text-white mt-1">0</p></div>
-                                <div class="text-right">
-                                    <p class="text-zinc-600 uppercase text-[9px] mb-1">Owned Capacity</p>
-                                    <p id="owned-capacity" class="text-xl font-bold text-white">0 T</p>
-                                </div>
-                            </div>
+                          
                             <div id="capacity-warning" class="mt-4 p-3 bg-yellow-900/10 border border-yellow-900/40 rounded-xl text-yellow-600 text-xs flex items-center gap-2">
                                 <i class="fa-solid fa-triangle-exclamation"></i> 
                                 <span>Gap: <span id="gap-amount" class="font-bold">0 T</span> · You need additional lorries.</span>
@@ -1178,28 +1186,34 @@ const OWNER_PAGE_HTML = `
                 </div>`).join('');
         }
  
-        function initFleetAllocation(committedQty, offer) {
-            document.getElementById('alloc-material').innerText = offer.type;
-            document.getElementById('alloc-qty').innerText = committedQty + ' T';
-            document.getElementById('alloc-pickup').innerText = [offer.slot, offer.loadingPoint].filter(Boolean).join(' - ') || 'N/A';
-            document.getElementById('alloc-drop').innerText = offer.dest;
-            document.getElementById('alloc-date').innerText = offer.date;
-            document.getElementById('alloc-window').innerText = `${offer.startTime || '06:30'} - ${offer.endTime || '18:00'}`;
-            document.getElementById('total-req').innerText = committedQty + ' T';
- 
-            const totalRequired = offer.totalLorriesRequired || 0;
-            document.getElementById('alloc-site-req').innerText = `${totalRequired} Lorries`;
- 
-            ownedLorries = [];
-            renderOwnedLorryList();
-            activeLorryTypeSet = LORRY_TYPE_SETS[offer.lorryType] ? offer.lorryType : 'Tipper Lorry';
-            renderExtraLorryOptions();
+       function initFleetAllocation(committedQty, offer) {
+    // --- ಪರ್ಚೇಸರ್ ನ ಅಗತ್ಯದ ಡೇಟಾವನ್ನು ತೋರಿಸುವ ವಿಭಾಗ (ಹೊಸ ಸೇರ್ಪಡೆ) ---
+    document.getElementById('target-qty-display').innerText = committedQty + ' T';
+    document.getElementById('target-lorries-display').innerText = (offer.totalLorriesRequired || 0) + ' Lorries';
+    // -------------------------------------------------------
 
-            document.getElementById('alloc-rate').value = '';
-            calculateTotalAmount();
- 
-            calculateFleet();
-        }
+    // ಉಳಿದ ಪಟ್ಟುಳದ ಕೋಡ್ ಹಾಗೆಯೇ ಇರುತ್ತದೆ...
+    document.getElementById('alloc-material').innerText = offer.type;
+    document.getElementById('alloc-qty').innerText = committedQty + ' T';
+    document.getElementById('alloc-pickup').innerText = [offer.slot, offer.loadingPoint].filter(Boolean).join(' - ') || 'N/A';
+    document.getElementById('alloc-drop').innerText = offer.dest;
+    document.getElementById('alloc-date').innerText = offer.date;
+    document.getElementById('alloc-window').innerText = `${offer.startTime || '06:30'} - ${offer.endTime || '18:00'}`;
+    document.getElementById('total-req').innerText = committedQty + ' T';
+
+    const totalRequired = offer.totalLorriesRequired || 0;
+    document.getElementById('alloc-site-req').innerText = `${totalRequired} Lorries`;
+
+    ownedLorries = [];
+    renderOwnedLorryList();
+    activeLorryTypeSet = LORRY_TYPE_SETS[offer.lorryType] ? offer.lorryType : 'Tipper Lorry';
+    renderExtraLorryOptions();
+
+    document.getElementById('alloc-rate').value = '';
+    calculateTotalAmount();
+
+    calculateFleet();
+}
 
         function calculateTotalAmount() {
             const rate = parseFloat(document.getElementById('alloc-rate').value) || 0;
