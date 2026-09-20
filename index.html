@@ -413,115 +413,142 @@
                 </section>
  
                 <!-- FLEET ALLOCATION PAGE -->
-                <section id="page-fleet-alloc" class="page-section hidden">
-                    <div class="max-w-3xl mx-auto space-y-6">
-                        <div class="bg-green-900/20 border border-green-500/40 p-4 rounded-xl flex items-center gap-3 text-green-400 text-sm font-bold">
-                            <i class="fa-solid fa-circle-check text-lg"></i>
-                            <div>
-                                <p>Dispatch Accepted!</p>
-                                <p class="text-[10px] opacity-70 font-normal">Sourced Order — Now allocate your fleet</p>
-                            </div>
-                        </div>
-                        <div class="card p-6 rounded-2xl">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Trip Summary</h3>
-                                <div class="text-right">
-                                    <p class="text-zinc-500 uppercase text-[9px] font-bold">Booking Status</p>
-                                    <span class="text-green-500 font-bold text-xs uppercase">Allocating...</span>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4 text-xs">
-                                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Material</p><p class="font-bold text-white" id="alloc-material">Iron Ore</p></div>
-                                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Purchase Quantity</p><p class="font-bold text-white" id="alloc-qty">0 T</p></div>
-                                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Pick-up</p><p class="font-bold text-white" id="alloc-pickup">Dharmapur</p></div>
-                                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Drop</p><p class="font-bold text-white" id="alloc-drop">Somalapura</p></div>
-                                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Date</p><p class="font-bold text-white" id="alloc-date">2026-06-25</p></div>
-                                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Window</p><p class="font-bold text-white" id="alloc-window">06:30 - 18:00</p></div>
-                                <div class="col-span-2 bg-yellow-900/10 p-2 rounded-lg border border-yellow-900/30">
-                                    <p class="text-zinc-600 uppercase text-[9px] mb-1">Total Lorries Required (Site Management Requirement)</p>
-                                    <p class="font-bold text-yellow-500 text-sm" id="alloc-site-req">0 Lorries</p>
-                                </div>
-                            </div>
-                        </div>
+               <!-- FLEET ALLOCATION PAGE -->
+<section id="page-fleet-alloc" class="page-section hidden">
+    <div class="max-w-3xl mx-auto space-y-6">
+        <div class="bg-green-900/20 border border-green-500/40 p-4 rounded-xl flex items-center gap-3 text-green-400 text-sm font-bold">
+            <i class="fa-solid fa-circle-check text-lg"></i>
+            <div>
+                <p>Dispatch Accepted!</p>
+                <p class="text-[10px] opacity-70 font-normal">Sourced Order — Now allocate your fleet</p>
+            </div>
+        </div>
 
-                        <div class="card p-6 rounded-2xl border-green-900/30 bg-green-900/5">
-                            <h3 class="text-zinc-500 uppercase text-[10px] font-bold mb-4 tracking-widest flex items-center gap-2">
-                                <i class="fa-solid fa-indian-rupee-sign text-green-500"></i> Pricing
-                            </h3>
-                            <div class="flex flex-col gap-4">
-                                <div class="flex items-center justify-between bg-zinc-900/50 p-6 rounded-xl border border-zinc-800">
-                                    <div class="flex-1">
-                                        <p class="text-sm text-zinc-300 mb-1">Rate per Ton</p>
-                                        <p class="text-[10px] text-zinc-500 italic">Amount offered for 1 ton of ore.</p>
-                                    </div>
-                                    <div class="flex items-center gap-3 bg-black p-2 rounded-xl border border-zinc-800">
-                                        <span class="text-green-500 font-bold px-2">₹</span>
-                                        <input type="number" id="alloc-rate" oninput="calculateTotalAmount()" class="bg-transparent text-right font-bold text-white text-lg w-32 outline-none" placeholder="0.00">
-                                    </div>
-                                </div>
-                                <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl flex justify-between items-center">
-                                    <span class="text-xs text-zinc-400 uppercase font-bold">Total Amount <span class="text-zinc-600 text-[10px] font-normal">(Rate × Quantity)</span></span>
-                                    <span id="display-total-amount" class="text-xl font-bold text-green-500">₹ 0.00</span>
-                                </div>
-                            </div>
-                        </div>
- 
-                        <div class="card p-6 rounded-2xl">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Number Of Lorrys</h3>
-                                <button onclick="openAddOwnedLorry()" class="btn-gold text-[11px] font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i class="fa-solid fa-plus text-[10px]"></i> Add Lorry</button>
-                            </div>
-                            <div id="add-owned-lorry-form" class="hidden bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 mb-4 space-y-3">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Lorry Number *</label><input type="text" id="ol-number" placeholder="e.g. KA-01-F1234" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
-                                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Driver Name *</label><input type="text" id="ol-driver" placeholder="e.g. Ramesh Kumar" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
-                                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Phone Number *</label><input type="tel" id="ol-phone" placeholder="e.g. 9876543210" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
-                                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">License Number *</label><input type="text" id="ol-license" placeholder="e.g. DL-1420110012345" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
-                                  
-                                    
-                                </div>
-                                <div class="flex gap-3 pt-1">
-                                    <button onclick="closeAddOwnedLorry()" class="flex-1 bg-zinc-800 p-2.5 rounded-lg text-xs font-bold text-zinc-400">Cancel</button>
-                                    <button onclick="saveOwnedLorry()" class="flex-1 btn-gold p-2.5 rounded-lg text-xs font-bold">Save Lorry</button>
-                                </div>
+        <!-- TRIP SUMMARY CARD -->
+        <div class="card p-6 rounded-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Trip Summary</h3>
+                <div class="text-right">
+                    <p class="text-zinc-500 uppercase text-[9px] font-bold">Booking Status</p>
+                    <span class="text-green-500 font-bold text-xs uppercase">Allocating...</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4 text-xs">
+                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Material</p><p class="font-bold text-white" id="alloc-material">--</p></div>
+                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Purchase Quantity</p><p class="font-bold text-white" id="alloc-qty">--</p></div>
+                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Pick-up</p><p class="font-bold text-white" id="alloc-pickup">--</p></div>
+                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Drop</p><p class="font-bold text-white" id="alloc-drop">--</p></div>
+                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Date</p><p class="font-bold text-white" id="alloc-date">--</p></div>
+                <div><p class="text-zinc-600 uppercase text-[9px] mb-1">Window</p><p class="font-bold text-white" id="alloc-window">--</p></div>
+                <div class="col-span-2 bg-yellow-900/10 p-2 rounded-lg border border-yellow-900/30">
+                    <p class="text-zinc-600 uppercase text-[9px] mb-1">Total Lorries Required (Site Requirement)</p>
+                    <p class="font-bold text-yellow-500 text-sm" id="alloc-site-req">--</p>
+                </div>
+            </div>
+        </div>
 
-                                
-                            </div>
-                             <div class="flex justify-between items-center bg-zinc-900/80 p-3 rounded-xl border border-zinc-800 mb-4">
-    <div class="text-center flex-1 border-r border-zinc-800">
-        <p class="text-[9px] text-zinc-500 uppercase font-bold">Target Qty</p>
-        <p id="target-qty-display" class="text-sm font-bold text-white">--</p>
+        <!-- PRICING CARD -->
+        <div class="card p-6 rounded-2xl border-green-900/30 bg-green-900/5">
+            <h3 class="text-zinc-500 uppercase text-[10px] font-bold mb-4 tracking-widest">
+                <i class="fa-solid fa-indian-rupee-sign text-green-500"></i> Pricing
+            </h3>
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center justify-between bg-zinc-900/50 p-6 rounded-xl border border-zinc-800">
+                    <div class="flex-1">
+                        <p class="text-sm text-zinc-300 mb-1">Rate per Ton</p>
+                        <p class="text-[10px] text-zinc-500 italic">Amount offered for 1 ton of ore.</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-black p-2 rounded-xl border border-zinc-800">
+                        <span class="text-green-500 font-bold px-2">₹</span>
+                        <input type="number" id="alloc-rate" oninput="calculateTotalAmount()" class="bg-transparent text-right font-bold text-white text-lg w-32 outline-none" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl flex justify-between items-center">
+                    <span class="text-xs text-zinc-400 uppercase font-bold">Total Amount <span class="text-zinc-600 text-[10px] font-normal">(Rate × Quantity)</span></span>
+                    <span id="display-total-amount" class="text-xl font-bold text-green-500">₹ 0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NUMBER OF LORRIES CARD (WITH TARGET SUMMARY) -->
+        <div class="card p-6 rounded-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Number of Lorries</h3>
+                <button onclick="openAddOwnedLorry()" class="btn-gold text-[11px] font-bold py-2 px-4 rounded-lg flex items-center gap-2"><i class="fa-solid fa-plus text-[10px]"></i> Add Lorry</button>
+            </div>
+
+            <!-- Target Summary: ಪರ್ಚೇಸರ್ ಅಗತ್ಯವನ್ನು ಇಲ್ಲಿ ನೋಡಬಹುದು -->
+            <div class="flex justify-between items-center bg-zinc-900/80 p-3 rounded-xl border border-zinc-800 mb-6">
+                <div class="text-center flex-1 border-r border-zinc-800">
+                    <p class="text-[9px] text-zinc-500 uppercase font-bold">Target Qty</p>
+                    <p id="target-qty-display" class="text-sm font-bold text-white">--</p>
+                </div>
+                <div class="text-center flex-1">
+                    <p class="text-[9px] text-zinc-500 uppercase font-bold">Required Lorries</p>
+                    <p id="target-lorries-display" class="text-sm font-bold text-yellow-500">--</p>
+                </div>
+            </div>
+
+            <!-- Add Lorry Form -->
+            <div id="add-owned-lorry-form" class="hidden bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 mb-4 space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Lorry Number *</label><input type="text" id="ol-number" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
+                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Driver Name *</label><input type="text" id="ol-driver" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
+                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Phone Number *</label><input type="tel" id="ol-phone" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
+                    <div><label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">License *</label><input type="text" id="ol-license" class="input-field w-full p-2.5 rounded-lg text-sm"></div>
+                </div>
+                <div class="flex gap-3 pt-1">
+                    <button onclick="closeAddOwnedLorry()" class="flex-1 bg-zinc-800 p-2.5 rounded-lg text-xs font-bold text-zinc-400">Cancel</button>
+                    <button onclick="saveOwnedLorry()" class="flex-1 btn-gold p-2.5 rounded-lg text-xs font-bold">Save Lorry</button>
+                </div>
+            </div>
+
+            <div id="owned-lorry-list" class="space-y-2 mb-4"></div>
+
+            <div class="flex items-center justify-between bg-zinc-900/50 p-4 rounded-xl border border-zinc-800">
+                <div><span class="text-xs text-zinc-400">No. of lorries you own</span><p id="owned-count" class="font-bold text-sm text-white mt-1">0</p></div>
+                <div class="text-right">
+                    <p class="text-zinc-600 uppercase text-[9px] mb-1">Owned Capacity</p>
+                    <p id="owned-capacity" class="text-xl font-bold text-white">0 T</p>
+                </div>
+            </div>
+
+            <div id="capacity-warning" class="mt-4 p-3 bg-yellow-900/10 border border-yellow-900/40 rounded-xl text-yellow-600 text-xs flex items-center gap-2 hidden">
+                <i class="fa-solid fa-triangle-exclamation"></i> 
+                <span>Gap: <span id="gap-amount" class="font-bold">0 T</span></span>
+            </div>
+        </div>
+
+        <!-- ADDITIONAL LORRIES SECTION (ഇದು ಈಗ ಖಚಿತವಾಗಿ ಕಾಣಿಸುತ್ತದೆ) -->
+        <div class="card p-6 rounded-2xl">
+            <h3 class="text-zinc-500 uppercase text-[10px] font-bold mb-4 tracking-widest">Additional Lorries Required</h3>
+            <p id="extra-lorry-type-label" class="text-[10px] text-zinc-600 mb-3">Options for Tipper Lorry</p>
+            <div id="extra-lorry-options" class="space-y-3">
+                <!-- Dynamic options go here -->
+            </div>
+        </div>
+
+        <!-- FINAL TOTALS -->
+        <div class="card p-6 rounded-2xl border-yellow-900/30 bg-zinc-900/30">
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div><p class="text-zinc-600 uppercase text-[9px] font-bold mb-1">Total Lorries</p><p id="total-lorries" class="text-xl font-bold text-white">0</p></div>
+                <div><p class="text-zinc-600 uppercase text-[9px] font-bold mb-1">Total Capacity</p><p id="total-cap" class="text-xl font-bold text-yellow-500">0 T</p></div>
+                <div><p class="text-zinc-600 uppercase text-[9px] font-bold mb-1">Required</p><p id="total-req" class="text-xl font-bold text-white">0 T</p></div>
+            </div>
+            <div id="final-shortage" class="hidden mt-4 text-center text-yellow-500 text-xs font-medium">
+                <i class="fa-solid fa-circle-info"></i> <span id="final-shortage-text"></span>
+            </div>
+        </div>
+
+        <div class="flex gap-4 pb-10">
+            <button onclick="showPage('flash')" class="flex-1 py-4 rounded-xl bg-zinc-800 text-zinc-400 font-bold hover:bg-zinc-700 transition-all">Back</button>
+            <button id="confirm-trip-btn" onclick="confirmFleetTrip()" class="flex-1 py-4 rounded-xl bg-red-900/30 text-red-500 border border-red-900/50 font-bold opacity-50 cursor-not-allowed transition-all" disabled>Confirm Trip</button>
+        </div>
     </div>
-    <div class="text-center flex-1">
-        <p class="text-[9px] text-zinc-500 uppercase font-bold">Required Lorries</p>
-        <p id="target-lorries-display" class="text-sm font-bold text-yellow-500">--</p>
-    </div>
-</div>
+</section>
 
-                            
-                            <div id="owned-lorry-list" class="space-y-2 mb-4"></div>
-                          
-                            <div id="capacity-warning" class="mt-4 p-3 bg-yellow-900/10 border border-yellow-900/40 rounded-xl text-yellow-600 text-xs flex items-center gap-2">
-                                <i class="fa-solid fa-triangle-exclamation"></i> 
-                                <span>Gap: <span id="gap-amount" class="font-bold">0 T</span> · You need additional lorries.</span>
-                            </div>
-                        </div>
-                        <div class="card p-6 rounded-2xl">
-                            <h3 class="text-zinc-500 uppercase text-[10px] font-bold mb-4 tracking-widest">Additional Lorries Required</h3>
-                            <p id="extra-lorry-type-label" class="text-[10px] text-zinc-600 mb-3"></p>
-                            <div id="extra-lorry-options" class="space-y-3"></div>
-                        </div>
-                        <div class="card p-6 rounded-2xl border-yellow-900/30 bg-zinc-900/30">
-                            <div class="grid grid-cols-3 gap-4 text-center">
-                                <div><p class="text-zinc-600 uppercase text-[9px] font-bold mb-1">Total Lorries</p><p id="total-lorries" class="text-xl font-bold text-white">0</p></div>
-                                <div><p class="text-zinc-600 uppercase text-[9px] font-bold mb-1">Total Capacity</p><p id="total-cap" class="text-xl font-bold text-yellow-500">0 T</p></div>
-                                <div><p class="text-zinc-600 uppercase text-[9px] font-bold mb-1">Required</p><p id="total-req" class="text-xl font-bold text-white">0 T</p></div>
-                            </div>
-                            <div id="final-shortage" class="hidden mt-4 text-center text-yellow-500 text-xs font-medium">
-                                <i class="fa-solid fa-circle-info"></i> <span id="final-shortage-text"></span>
-                            </div>
-                        </div>
-                        <div id="confirm-trip-modal" class="modal-overlay hidden">
+<!-- CONFIRMATION MODAL -->
+<div id="confirm-trip-modal" class="modal-overlay hidden">
     <div class="card max-w-sm w-full rounded-3xl p-8 text-center">
         <div class="w-16 h-16 bg-yellow-500/20 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fa-solid fa-circle-question text-3xl"></i>
@@ -534,8 +561,6 @@
         </div>
     </div>
 </div>
-                    </div>
-                </section>
  
                 <!-- ADMIN PANEL PAGE -->
                 <section id="page-admin" class="page-section hidden">
@@ -1139,69 +1164,19 @@ const OWNER_PAGE_HTML = `
         let extraAllocation = { }; 
         let activeLorryTypeSet = 'Tipper Lorry';
         // Corrected per-lorry capacities (tons): 6-wheel=10T, 10-wheel=19T, 12-wheel=23T, 16-wheel=35T
-        const CAP = { '6': 10, '10': 19, '12': 23, '16': 35, 'owned': 25 };
-        const LORRY_TYPE_SETS = {
-            'Tipper Lorry': ['6', '10', '12', '16'],
-            'Civil Lorry': ['6', '10', '12', '16']
-        };
- 
-        function openAddOwnedLorry() { document.getElementById('add-owned-lorry-form').classList.remove('hidden'); }
-        function closeAddOwnedLorry() {
-            document.getElementById('add-owned-lorry-form').classList.add('hidden');
-            ['ol-number','ol-license','ol-driver','ol-phone'].forEach(id => document.getElementById(id).value = '');
-        }
-        function saveOwnedLorry() {
-            const number = document.getElementById('ol-number').value.trim();
-            const license = document.getElementById('ol-license').value.trim();
-            const driver = document.getElementById('ol-driver').value.trim();
-            const phone = document.getElementById('ol-phone').value.trim();
-            if(!number || !license || !driver || !phone) { alert('Please fill in lorry number, license number, driver name and phone number.'); return; }
-            ownedLorries.push({ number, license, driver, phone });
-            closeAddOwnedLorry();
-            renderOwnedLorryList();
-            calculateFleet();
-        }
-        function removeOwnedLorry(idx) {
-            ownedLorries.splice(idx, 1);
-            renderOwnedLorryList();
-            calculateFleet();
-        }
-        function renderOwnedLorryList() {
-            const listEl = document.getElementById('owned-lorry-list');
-            if(ownedLorries.length === 0) { listEl.innerHTML = ''; return; }
-            listEl.innerHTML = ownedLorries.map((l, idx) => `
-                <div class="flex items-center justify-between p-3 bg-zinc-900/50 rounded-xl border border-zinc-800">
-                    <div class="text-xs">
-                        <p class="font-bold text-white">${l.number} <span class="text-zinc-500 font-normal">· ${l.license}</span></p>
-                        <p class="text-zinc-500">${l.driver} · ${l.phone}</p>
-                    </div>
-                    <button onclick="removeOwnedLorry(${idx})" class="text-zinc-500 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
-                </div>`).join('');
-        }
- 
-        function renderExtraLorryOptions() {
-            const wheelKeys = LORRY_TYPE_SETS[activeLorryTypeSet] || LORRY_TYPE_SETS['Tipper Lorry'];
-            const icons = { '6': '🚚', '10': '🚛', '12': '🚚', '16': '🚛' };
-            document.getElementById('extra-lorry-type-label').innerText = `Options for ${activeLorryTypeSet}`;
-            extraAllocation = {};
-            wheelKeys.forEach(k => extraAllocation[k] = 0);
-            document.getElementById('extra-lorry-options').innerHTML = wheelKeys.map(k => `
-                <div class="flex items-center justify-between p-4 bg-zinc-900/50 rounded-xl border border-zinc-800">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded bg-black flex items-center justify-center border border-zinc-800 text-xs">${icons[k]}</div>
-                        <div><p class="text-sm font-bold text-white">${k}-Wheel Lorry</p><p class="text-[10px] text-zinc-500">${CAP[k]} T / lorry</p></div>
-                    </div>
-                    <input type="number" min="0" id="cnt-${k}" value="0" oninput="setLorryCount('${k}', this.value)" class="input-field w-20 text-center p-2 rounded-lg text-sm">
-                </div>`).join('');
-        }
- 
-       function initFleetAllocation(committedQty, offer) {
-    // --- ಪರ್ಚೇಸರ್ ನ ಅಗತ್ಯದ ಡೇಟಾವನ್ನು ತೋರಿಸುವ ವಿಭಾಗ (ಹೊಸ ಸೇರ್ಪಡೆ) ---
-    document.getElementById('target-qty-display').innerText = committedQty + ' T';
-    document.getElementById('target-lorries-display').innerText = (offer.totalLorriesRequired || 0) + ' Lorries';
-    // -------------------------------------------------------
+      // ಅನಿಮೇಶನ್ ಮತ್ತು ಎಕ್ಸ್ಟ್ರಾ ಲಾರಿ ಡೇಟಾ
+const CAP = { '6': 10, '10': 19, '12': 23, '16': 35, 'owned': 25 };
+const LORRY_TYPE_SETS = {
+    'Tipper Lorry': ['6', '10', '12', '16'],
+    'Civil Lorry': ['6', '10', '12', '16']
+};
 
-    // ಉಳಿದ ಪಟ್ಟುಳದ ಕೋಡ್ ಹಾಗೆಯೇ ಇರುತ್ತದೆ...
+let extraAllocation = {};
+let activeLorryTypeSet = 'Tipper Lorry';
+
+// 1. ಫ್ಲೀಟ್ ಅಲೋಕೇಶನ್ ಇನಿಶಿಯಲೈಸೇಶನ್ (ಇದು ಪ್ರಮುಖವಾದದ್ದು)
+function initFleetAllocation(committedQty, offer) {
+    // Trip Summary ಡೇಟಾ ಪಂಪ್ ಮಾಡುವುದು
     document.getElementById('alloc-material').innerText = offer.type;
     document.getElementById('alloc-qty').innerText = committedQty + ' T';
     document.getElementById('alloc-pickup').innerText = [offer.slot, offer.loadingPoint].filter(Boolean).join(' - ') || 'N/A';
@@ -1210,67 +1185,98 @@ const OWNER_PAGE_HTML = `
     document.getElementById('alloc-window').innerText = `${offer.startTime || '06:30'} - ${offer.endTime || '18:00'}`;
     document.getElementById('total-req').innerText = committedQty + ' T';
 
-    const totalRequired = offer.totalLorriesRequired || 0;
-    document.getElementById('alloc-site-req').innerText = `${totalRequired} Lorries`;
+    // TARGET SUMMARY (ನಿಮ್ಮ ಕೇಳಿದ ಹೊಸ ವೈಶಿಷ್ಟ್ಯ)
+    document.getElementById('target-qty-display').innerText = committedQty + ' T';
+    document.getElementById('target-lorries-display').innerText = (offer.totalLorriesRequired || 0) + ' Lorries';
+    document.getElementById('alloc-site-req').innerText = `${offer.totalLorriesRequired || 0} Lorries`;
+
+    // Extras & Lorry Type setup
+    activeLorryTypeSet = LORRY_TYPE_SETS[offer.lorryType] ? offer.lorryType : 'Tipper Lorry';
+    renderExtraLorryOptions(); // ಈ ಫಂಕ್ಷನ್ ಈಗ ಕನ್ಫರ್ಮ್ ಆಗಿ CALL ಆಗುತ್ತದೆ
 
     ownedLorries = [];
     renderOwnedLorryList();
-    activeLorryTypeSet = LORRY_TYPE_SETS[offer.lorryType] ? offer.lorryType : 'Tipper Lorry';
-    renderExtraLorryOptions();
-
     document.getElementById('alloc-rate').value = '';
     calculateTotalAmount();
-
     calculateFleet();
 }
 
-        function calculateTotalAmount() {
-            const rate = parseFloat(document.getElementById('alloc-rate').value) || 0;
-            const qtyText = document.getElementById('alloc-qty').innerText;
-            const qty = parseFloat(qtyText.replace(' T', '')) || 0;
-            const total = rate * qty;
-            document.getElementById('display-total-amount').innerText = '₹ ' + total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-        }
- 
-        function setLorryCount(key, val) {
-            extraAllocation[key] = Math.max(0, parseInt(val) || 0);
-            calculateFleet();
-        }
-        function extraLorryCount() { return Object.values(extraAllocation).reduce((s, v) => s + v, 0); }
-        function extraLorryCapacity() { return Object.keys(extraAllocation).reduce((s, k) => s + extraAllocation[k] * CAP[k], 0); }
- 
-        function calculateFleet() {
-            const ownedCap = ownedLorries.length * CAP.owned;
-            const addCap = extraLorryCapacity();
-            const total = ownedCap + addCap;
-            const reqTons = parseInt(document.getElementById('total-req').innerText) || 0;
-            document.getElementById('owned-count').innerText = ownedLorries.length;
-            document.getElementById('owned-capacity').innerText = ownedCap.toFixed(1) + ' T';
-            document.getElementById('total-cap').innerText = total.toFixed(1) + ' T';
-            document.getElementById('total-lorries').innerText = ownedLorries.length + extraLorryCount();
-            const gap = reqTons - total;
-            const warning = document.getElementById('capacity-warning');
-            const finalShortage = document.getElementById('final-shortage');
-            const finalShortageText = document.getElementById('final-shortage-text');
-            const confirmBtn = document.getElementById('confirm-trip-btn');
-            if(gap > 0) {
-                warning.classList.remove('hidden');
-                document.getElementById('gap-amount').innerText = gap.toFixed(1) + ' T';
-                finalShortage.classList.remove('hidden');
-                finalShortageText.innerText = `You can currently deliver ${total.toFixed(1)} T of the ${reqTons} T required — short by ${gap.toFixed(1)} T. You can still confirm with this capacity.`;
-            } else {
-                warning.classList.add('hidden');
-                finalShortage.classList.add('hidden');
-            }
-            const totalLorryCount = ownedLorries.length + extraLorryCount();
-            if(totalLorryCount > 0) {
-                confirmBtn.disabled = false;
-                confirmBtn.className = "flex-1 py-4 rounded-xl bg-yellow-600 text-black font-bold hover:bg-yellow-500 transition-all";
-            } else {
-                confirmBtn.disabled = true;
-                confirmBtn.className = "flex-1 py-4 rounded-xl bg-red-900/30 text-red-500 border border-red-900/50 font-bold opacity-50 cursor-not-allowed transition-all";
-            }
-        }
+// 2. ಎಕ್ಸ್ಟ್ರಾ ಲಾರಿ ಆಪ್ಷನ್ ಕ್ರಿಯೇಟ್ ಮಾಡುವುದು (ಇದು ಈಗ ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ)
+function renderExtraLorryOptions() {
+    const wheelKeys = LORRY_TYPE_SETS[activeLorryTypeSet];
+    const icons = { '6': '🚚', '10': '🚛', '12': '🚚', '16': '🚛' };
+    
+    document.getElementById('extra-lorry-type-label').innerText = `Options for ${activeLorryTypeSet}`;
+    
+    // Reset data
+    extraAllocation = {};
+    wheelKeys.forEach(k => extraAllocation[k] = 0);
+
+    const container = document.getElementById('extra-lorry-options');
+    container.innerHTML = wheelKeys.map(k => `
+        <div class="flex items-center justify-between p-4 bg-zinc-900/50 rounded-xl border border-zinc-800">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded bg-black flex items-center justify-center border border-zinc-800 text-xs">${icons[k]}</div>
+                <div><p class="text-sm font-bold text-white">${k}-Wheel Lorry</p><p class="text-[10px] text-zinc-500">${CAP[k]} T / lorry</p></div>
+            </div>
+            <input type="number" min="0" id="cnt-${k}" value="0" oninput="setLorryCount('${k}', this.value)" class="input-field w-20 text-center p-2 rounded-lg text-sm">
+        </div>
+    `).join('');
+}
+
+function setLorryCount(key, val) {
+    extraAllocation[key] = Math.max(0, parseInt(val) || 0);
+    calculateFleet();
+}
+
+// 3. ಕ್ಯಾಲ್ಕುಲೇಟ್ ಫ್ಲೀಟ್ (ಇದು ಟೋಟಲ್ ನಂಬರ್ ಮತ್ತು ಕೆಪಾಸಿಟಿಯನ್ನು ಅಪ್‌ಡೇಟ್ ಮಾಡುತ್ತದೆ)
+function calculateFleet() {
+    const ownedCap = ownedLorries.length * CAP.owned;
+    const addCap = Object.keys(extraAllocation).reduce((s, k) => s + (extraAllocation[k] * CAP[k]), 0);
+    const totalCap = ownedCap + addCap;
+    
+    const reqTons = parseFloat(document.getElementById('total-req').innerText) || 0;
+    const totalLorries = ownedLorries.length + Object.values(extraAllocation).reduce((a, b) => a + b, 0);
+
+    // UI Updates
+    document.getElementById('owned-count').innerText = ownedLorries.length;
+    document.getElementById('owned-capacity').innerText = ownedCap.toFixed(1) + ' T';
+    document.getElementById('total-cap').innerText = totalCap.toFixed(1) + ' T';
+    document.getElementById('total-lorries').innerText = totalLorries;
+    document.getElementById('total-req').innerText = reqTons + ' T';
+
+    // Gap Calculation
+    const gap = reqTons - totalCap;
+    const warning = document.getElementById('capacity-warning');
+    const finalShortage = document.getElementById('final-shortage');
+
+    if(gap > 0) {
+        warning.classList.remove('hidden');
+        document.getElementById('gap-amount').innerText = gap.toFixed(1) + ' T';
+        finalShortage.classList.remove('hidden');
+        document.getElementById('final-shortage-text').innerText = `Short by ${gap.toFixed(1)} T. Total provided: ${totalCap.toFixed(1)} T`;
+    } else {
+        warning.classList.add('hidden');
+        finalShortage.classList.add('hidden');
+    }
+
+    // Button state
+    const confirmBtn = document.getElementById('confirm-trip-btn');
+    if(totalLorries > 0) {
+        confirmBtn.disabled = false;
+        confirmBtn.className = "flex-1 py-4 rounded-xl bg-yellow-600 text-black font-bold hover:bg-yellow-500 transition-all";
+    } else {
+        confirmBtn.disabled = true;
+        confirmBtn.className = "flex-1 py-4 rounded-xl bg-red-900/30 text-red-500 border border-red-900/50 font-bold opacity-50 cursor-not-allowed transition-all";
+    }
+}
+
+// 4. ಕನ್ಫರ್ಮೇಷನ್ ಫಂಕ್ಷನ್‌ಗಳು
+function confirmFleetTrip() {
+    if(!document.getElementById('confirm-trip-btn').disabled) openConfirmModal();
+}
+function openConfirmModal() { document.getElementById('confirm-trip-modal').classList.remove('hidden'); }
+function closeConfirmModal() { document.getElementById('confirm-trip-modal').classList.add('hidden'); }
  
 function confirmFleetTrip() {
             const offer = db.find(d => d.status === 'PENDING_OFFER' || d.status === 'PARTIALLY_Sourced');
