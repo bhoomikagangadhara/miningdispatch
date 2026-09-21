@@ -280,7 +280,7 @@
     </div>
 
     <div class="card p-4 rounded-xl mb-6">
-        <label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Track by Truck Number</label>
+        <label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Lorry by Truck Number</label>
         <div class="flex gap-3">
             <input type="text" id="fleet2-search-input" placeholder="e.g. KA 134" class="input-field flex-1 p-2.5 rounded-lg text-sm">
             <button onclick="searchFleet2Truck()" class="btn-gold px-6 rounded-lg text-sm font-bold">Track</button>
@@ -292,7 +292,7 @@
         <div class="lg:col-span-3 space-y-4">
             <!-- Lorry Category card removed as per request -->
             <div class="card p-4 rounded-xl">
-                <p class="text-zinc-500 uppercase text-[10px] font-bold mb-3 tracking-widest text-center">Available Trucks</p>
+                <p class="text-zinc-500 uppercase text-[10px] font-bold mb-3 tracking-widest text-center">Over Speed  Lorry</p>
                 <div id="fleet2-driver-list" class="flex flex-col gap-2 max-h-96 overflow-y-auto"></div>
             </div>
             <div class="card p-6 rounded-xl">
@@ -320,7 +320,7 @@
         <!-- RIGHT: trip info + alerts -->
         <div class="lg:col-span-3 space-y-6">
             <div class="card p-6 rounded-xl">
-                <h3 class="text-zinc-500 uppercase text-[10px] font-bold mb-4 tracking-widest">Truck Information</h3>
+                <h3 class="text-zinc-500 uppercase text-[10px] font-bold mb-4 tracking-widest">Lorry Information</h3>
                 <div class="bg-zinc-900/60 p-4 rounded-xl border border-zinc-800 mb-4">
                     <p class="text-[10px] font-bold text-zinc-500 uppercase mb-1">Vehicle Number</p>
                     <p id="fleet2-trip-truck" class="text-lg font-bold text-yellow-500">-</p>
@@ -347,7 +347,7 @@
 
             <div class="card p-6 rounded-xl border-red-900/30 bg-red-950/10">
                 <h3 class="text-red-500 uppercase text-[10px] font-bold mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-triangle-exclamation"></i> Police/SP Alert Log
+                    <i class="fa-solid fa-triangle-exclamation"></i> Generate Over Speed Data
                 </h3>
                 <div id="fleet2-alert-logs" class="space-y-3 max-h-60 overflow-y-auto text-[11px]">
                     <p class="text-zinc-600 italic">Monitoring speed violations...</p>
