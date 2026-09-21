@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORETRACK | Enterprise Logistics - Final Version</title>
+    <title>INDIRA | Enterprise Logistics - Final Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -44,7 +44,7 @@
         <aside id="sidebar" class="sidebar sidebar-closed md:translate-x-0 fixed md:relative w-72 h-full border-r border-zinc-800 flex flex-col bg-[#0f0f0f]">
             <div class="p-6 flex items-center gap-3 border-b border-zinc-800">
                 <div class="bg-yellow-600 p-2 rounded text-black font-bold text-xs">📦</div>
-                <h1 class="text-lg font-bold tracking-widest text-white">ORETRACK</h1>
+                <h1 class="text-lg font-bold tracking-widest text-white">INDIRA</h1>
                 <button onclick="toggleMenu()" class="md:hidden ml-auto text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div id="user-profile" class="px-6 py-6"></div>
@@ -739,9 +739,9 @@ const OWNER_PAGE_HTML = `
                     </div>
                 </div>
                 <script>
-                    const APP_URL = "https://oretrack-demo.netlify.app"; 
+                    const APP_URL = "https://INDIRA-demo.netlify.app"; 
                     window.onload = function() {
-                        const data = JSON.parse(localStorage.getItem('oretrack_bridge_data') || '{}');
+                        const data = JSON.parse(localStorage.getItem('INDIRA_bridge_data') || '{}');
                         if(data.mining) { document.getElementById('val-header-title').innerText = data.mining; }
                         if(data.material) { document.getElementById('val-header-sub').innerText = data.material; }
                         
@@ -770,7 +770,7 @@ const OWNER_PAGE_HTML = `
                     };
 
                     function showDriverID() {
-                        const data = JSON.parse(localStorage.getItem('oretrack_bridge_data') || '{}');
+                        const data = JSON.parse(localStorage.getItem('INDIRA_bridge_data') || '{}');
                         document.getElementById('id-name').innerText = data.driverName || 'Unknown Driver';
                         document.getElementById('id-license').innerText = 'License: ' + (data.driverLicense || 'N/A');
                         document.getElementById('id-phone').innerText = 'Phone: ' + (data.driverPhone || 'N/A');
@@ -823,7 +823,7 @@ const OWNER_PAGE_HTML = `
     }
 
     const last = db[0]; 
-    const freshMyTrips = JSON.parse(localStorage.getItem('oretrack_my_trips')) || [];
+    const freshMyTrips = JSON.parse(localStorage.getItem('INDIRA_my_trips')) || [];
     const trip = freshMyTrips[0]; 
 
     const windowStr = `${last.startTime || '06:30'} - ${last.endTime || '18:00'}`;
@@ -868,7 +868,7 @@ const OWNER_PAGE_HTML = `
     }
 
     let linkedHTML = OWNER_PAGE_HTML.replace(
-        'const data = JSON.parse(localStorage.getItem(\'oretrack_bridge_data\') || \'{}\');',
+        'const data = JSON.parse(localStorage.getItem(\'INDIRA_bridge_data\') || \'{}\');',
         `const data = ${JSON.stringify(bridgeData)};`
     );
 
@@ -896,9 +896,9 @@ const OWNER_PAGE_HTML = `
         const LEASE_DATA = [{ name: "Sri Kumaraswamy Mineral Exports (SKME) Pvt Ltd", id: "EA2141", type: "Iron Ore", status: "active", coords: [15.12, 76.65], isOurMine: true }];
         for(let i=2; i<=32; i++){ LEASE_DATA.push({ name: `Mining Lease Co ${i}`, id: `EA${2100+i}`, type: i%2==0?"Iron Ore":"Manganese", status: i%3==0?"active":i%3==1?"notified":"inactive", coords: [15.0 + Math.random()*0.3, 76.4 + Math.random()*0.4], isOurMine: false }); }
  
-        let db = JSON.parse(localStorage.getItem('oretrack_final_db')) || [];
+        let db = JSON.parse(localStorage.getItem('INDIRA_final_db')) || [];
         // Confirmed-trip summaries shown on the Purchaser's "My Dispatches" page.
-        let myTrips = JSON.parse(localStorage.getItem('oretrack_my_trips')) || [];
+        let myTrips = JSON.parse(localStorage.getItem('INDIRA_my_trips')) || [];
         let mapInstance = null, routeMapInstance = null, detailMapInstance = null, userRole = 'manager'; 
         let currentDetailIdx = null;
  
@@ -1078,7 +1078,7 @@ const OWNER_PAGE_HTML = `
                 allocations: [] 
             };
             db.unshift(newDispatch);
-            localStorage.setItem('oretrack_final_db', JSON.stringify(db));
+            localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
             updateStats();
             document.getElementById('done-site').innerText = newDispatch.miningSite;
             document.getElementById('done-slot').innerText = document.getElementById('f-slot').value;
@@ -1134,7 +1134,7 @@ const OWNER_PAGE_HTML = `
                     offer.timestamp = Date.now();
                 } else { offer.status = 'PARTIALLY_Sourced'; }
             } else { offer.status = 'CONFIRMED'; }
-            localStorage.setItem('oretrack_final_db', JSON.stringify(db));
+            localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
             showPage('fleet-alloc');
             initFleetAllocation(amount, offer);
         }
@@ -1154,7 +1154,7 @@ const OWNER_PAGE_HTML = `
                     offer.currentBuyer = BUYER_QUEUE[offer.currentBuyerIndex];
                     offer.timestamp = Date.now();
                 } else { offer.status = 'FAILED'; }
-                localStorage.setItem('oretrack_final_db', JSON.stringify(db));
+                localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
             }
             closeL_Modal();
             refreshBuyerIdentity(); 
@@ -1330,7 +1330,7 @@ const OWNER_PAGE_HTML = `
                 if(!dispatch.allocations) dispatch.allocations = [];
                 dispatch.allocations.push(allocationRecord);
                 dispatch.status = 'CONFIRMED';
-                localStorage.setItem('oretrack_final_db', JSON.stringify(db));
+                localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
             }
 
             // Build the Trip Summary shown on "My Dispatches": mining site, material,
@@ -1360,7 +1360,7 @@ const OWNER_PAGE_HTML = `
                     confirmedAt: Date.now()
                 };
                 myTrips.unshift(tripSummary);
-                localStorage.setItem('oretrack_my_trips', JSON.stringify(myTrips));
+                localStorage.setItem('INDIRA_my_trips', JSON.stringify(myTrips));
             }
 
             if(lorriesShort > 0) {
@@ -1564,7 +1564,7 @@ const OWNER_PAGE_HTML = `
             target.lorriesShort = Math.max(0, (target.lorriesShort || 0) - assignedCount);
             target.lorriesProvided = (target.lorriesProvided || 0) + assignedCount;
  
-            localStorage.setItem('oretrack_final_db', JSON.stringify(db));
+            localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
  
             // Notify each assigned owner with the same details entered on Create Dispatch.
             const windowLabel = `${item.startTime || '06:30'} - ${item.endTime || '18:00'}`;
@@ -1711,7 +1711,7 @@ const OWNER_PAGE_HTML = `
             if (logsContainer.querySelector('p.italic')) logsContainer.innerHTML = '';
 
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const msg = `🚨 *URGENT: ORETRACK ALERT* 🚨%0A%0A*Truck No:* ${driver.truck}%0A*Violation:* Overspeeding (${driver.speed} km/h)%0A*Route:* ${driver.from} → ${driver.to}%0A%0A_Sent via ORETRACK Monitoring System_`;
+            const msg = `🚨 *URGENT: INDIRA ALERT* 🚨%0A%0A*Truck No:* ${driver.truck}%0A*Violation:* Overspeeding (${driver.speed} km/h)%0A*Route:* ${driver.from} → ${driver.to}%0A%0A_Sent via INDIRA Monitoring System_`;
             const whatsappLink = `https://wa.me/${POLICE_PHONE_NUMBER}?text=${msg}`;
 
             const alertEntry = document.createElement('div');
