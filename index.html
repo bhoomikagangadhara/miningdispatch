@@ -281,7 +281,7 @@
     </div>
 
     <div class="card p-4 rounded-xl mb-6">
-        <label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Track by Lorry Number</label>
+         <label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Track by Lorry Number</label>
         <div class="flex gap-3">
             <input type="text" id="fleet2-search-input" placeholder="e.g. KA 134" class="input-field flex-1 p-2.5 rounded-lg text-sm">
             <button onclick="searchFleet2Truck()" class="btn-gold px-6 rounded-lg text-sm font-bold">Track</button>
@@ -611,7 +611,7 @@ const OWNER_PAGE_HTML = `
             <style>
                 :root { --primary: #f39c12; --dark: #2c3e50; --bg: #eceff1; --white: #ffffff; --success: #27ae60; --error: #e74c3c; }
                 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-                .app-card { width: 300px; background: var(--white); border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); overflow: hidden; position: relative; border: 1px solid #ccc; }
+                .app-card { width: 360px; background: var(--white); border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); overflow: hidden; position: relative; border: 1px solid #ccc; }
                 .header { background-color: var(--dark); color: white; padding: 20px; text-align: center; }
                 .header h2 { margin: 0; font-size: 1.3rem; }
                 .header p { margin: 5px 0 0; font-size: 0.8rem; opacity: 0.7; }
@@ -706,7 +706,7 @@ const OWNER_PAGE_HTML = `
                     </div>
   <div class="qr-important-note">
                 <i class="fa-solid fa-circle-exclamation"></i> 
-                <b>Note:</b> Lorries must arrive within 30 minutes of the scheduled start time (by <b>11:30 AM</b>). Late arrivals will be denied loading access.
+                <b>Note:</b> Lorries must arrive at Entry Gate at least 2 hours prior to the scheduled loading time. Late arrivals will be denied loading access.
             </div>
              <div class="sim-panel">
             <button class="btn-sim btn-ok" onclick="startWorkflow('on-time')">✅ ON-TIME TEST</button>
@@ -1125,7 +1125,7 @@ const OWNER_PAGE_HTML = `
         function initRouteMap(dest) {
             if(routeMapInstance) { routeMapInstance.remove(); routeMapInstance = null; }
             routeMapInstance = L.map('route-map', { zoomControl: false }).setView([15.14, 76.75], 12);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 19 }).addTo(routeMapInstance);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri', maxZoom: 16 }).addTo(routeMapInstance);
             const pickup = [15.10, 76.60], drop = dest.includes('Sandur') ? [15.25, 76.50] : [15.18, 76.85];
             L.circleMarker(pickup, { color: '#ef4444', radius: 6, fillOpacity: 1 }).addTo(routeMapInstance);
             L.circleMarker(drop, { color: '#22c55e', radius: 6, fillOpacity: 1 }).addTo(routeMapInstance);
@@ -1602,7 +1602,7 @@ const OWNER_PAGE_HTML = `
         function initDetailMap(item) {
             if(detailMapInstance) { detailMapInstance.remove(); detailMapInstance = null; }
             detailMapInstance = L.map('admin-detail-map', { zoomControl: false }).setView([15.13, 76.7], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 19 }).addTo(detailMapInstance);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri', maxZoom: 16 }).addTo(detailMapInstance);
             if(item.allocations) {
                 item.allocations.forEach(alc => {
                     const count = alc.trucks ? alc.trucks.length : 0;
@@ -1701,7 +1701,7 @@ const OWNER_PAGE_HTML = `
         function initFleetStatus2() {
             if(!fleet2MapInstance) {
                 fleet2MapInstance = L.map('fleet2-gps-map', { zoomControl: false }).setView(FLEET2_BASE, 7);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors © CARTO' }).addTo(fleet2MapInstance);
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles © Esri' }).addTo(fleet2MapInstance);
                 FLEET2_DRIVERS.forEach(d => {
                     const icon = L.divIcon({
                         className: 'fleet2-vehicle-marker',
@@ -1879,7 +1879,7 @@ const OWNER_PAGE_HTML = `
         function initLeaseMap() {
             if(mapInstance) return;
             mapInstance = L.map('map', { zoomControl: false }).setView([15.1394, 76.8877], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 19 }).addTo(mapInstance);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles © Esri', maxZoom: 16 }).addTo(mapInstance);
             LEASE_DATA.forEach(lease => {
                 let dotColor = lease.status === 'active' ? '#22c55e' : lease.status === 'notified' ? '#eab308' : '#ef4444';
                 let radius = lease.isOurMine ? 10 : 6;
