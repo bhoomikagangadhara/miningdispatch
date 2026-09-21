@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INDIRA | Enterprise Logistics </title>
+    <title>Indira | Enterprise Logistics - Final Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -44,7 +44,7 @@
         <aside id="sidebar" class="sidebar sidebar-closed md:translate-x-0 fixed md:relative w-72 h-full border-r border-zinc-800 flex flex-col bg-[#0f0f0f]">
             <div class="p-6 flex items-center gap-3 border-b border-zinc-800">
                 <div class="bg-yellow-600 p-2 rounded text-black font-bold text-xs">📦</div>
-                <h1 class="text-lg font-bold tracking-widest text-white">INDIRA</h1>
+                <h1 class="text-lg font-bold tracking-widest text-white">Indira</h1>
                 <button onclick="toggleMenu()" class="md:hidden ml-auto text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div id="user-profile" class="px-6 py-6"></div>
@@ -72,7 +72,7 @@
                 <section id="page-overview" class="page-section hidden">
                     <h2 class="text-2xl font-bold mb-8">OVERVIEW</h2>
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    
+                        <div class="card p-5 rounded-xl"><p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Recent Dispatches</p><p class="text-2xl font-bold text-yellow-500" id="stat-live">0</p></div>
                         <div class="card p-5 rounded-xl"><p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Confirmed</p><p class="text-2xl font-bold text-green-500" id="stat-conf">0</p></div>
                         <div class="card p-5 rounded-xl"><p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Total Tons</p><p class="text-2xl font-bold text-white" id="stat-tons">0</p></div>
                         <div class="card p-5 rounded-xl"><p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Total Dispatches</p><p class="text-2xl font-bold text-yellow-500" id="stat-total-disp">0</p></div>
@@ -95,14 +95,15 @@
                             <div class="bg-zinc-900/50 p-4 rounded-xl mb-6 border border-zinc-800">
                                 <div class="flex items-center gap-3 mb-2"><div class="bg-yellow-900/20 p-2 rounded text-yellow-500"><i class="fa-solid fa-box"></i></div><p class="text-[10px] text-zinc-500 uppercase">Mining Site *</p></div>
                                 <select id="f-mining-site" onchange="onMiningSiteChange()" class="input-field w-full p-2.5 rounded-lg text-sm required">
-                                    <option value="">Select mining site</option>
+                                  
+                                      <option value="">Select mining site</option>
                                     <option value="NMDC C-Block">NMDC C-Block</option>
                                     <option value="Tunga Mining">Tunga Mines</option>
                                     <option value="Bhadra Mining">Bhadra Mines</option>
                                     <option value="Narayanapura Mining">Narayanapura Mines</option>
                                     <option value="Nidhi Mining"> Nidhi Mines</option>
                                     <option value="MSPL Mines">MSPL Mines</option>
-                                    <option value="KVT Mines">KVT Mines</option>
+                                    <option value="KUT Mines">KUT Mines</option>
                                     <option value="SKME Mines">SKME Mines</option>
                                     <option value="VESCO Mines">VESCO Mines</option>
                                     <option value="Nandi Iron Mining">Nandi Iron Mines</option>
@@ -280,7 +281,7 @@
     </div>
 
     <div class="card p-4 rounded-xl mb-6">
-        <label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Lorry by Truck Number</label>
+        <label class="text-[10px] text-zinc-500 mb-1 block uppercase font-bold">Track by Lorry Number</label>
         <div class="flex gap-3">
             <input type="text" id="fleet2-search-input" placeholder="e.g. KA 134" class="input-field flex-1 p-2.5 rounded-lg text-sm">
             <button onclick="searchFleet2Truck()" class="btn-gold px-6 rounded-lg text-sm font-bold">Track</button>
@@ -292,7 +293,7 @@
         <div class="lg:col-span-3 space-y-4">
             <!-- Lorry Category card removed as per request -->
             <div class="card p-4 rounded-xl">
-                <p class="text-zinc-500 uppercase text-[10px] font-bold mb-3 tracking-widest text-center">Over Speed  Lorry</p>
+                <p class="text-zinc-500 uppercase text-[10px] font-bold mb-3 tracking-widest text-center">Overspeed Lorry</p>
                 <div id="fleet2-driver-list" class="flex flex-col gap-2 max-h-96 overflow-y-auto"></div>
             </div>
             <div class="card p-6 rounded-xl">
@@ -347,7 +348,7 @@
 
             <div class="card p-6 rounded-xl border-red-900/30 bg-red-950/10">
                 <h3 class="text-red-500 uppercase text-[10px] font-bold mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-triangle-exclamation"></i> Generate Over Speed Data
+                    <i class="fa-solid fa-triangle-exclamation"></i> Generate Overspeed Data
                 </h3>
                 <div id="fleet2-alert-logs" class="space-y-3 max-h-60 overflow-y-auto text-[11px]">
                     <p class="text-zinc-600 italic">Monitoring speed violations...</p>
@@ -608,7 +609,7 @@ const OWNER_PAGE_HTML = `
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Mining Dispatch</title>
             <style>
-                :root { --primary: #f39c12; --dark: #2c3e50; --bg: #eceff1; --white: #ffffff; --success: #27ae60; }
+                :root { --primary: #f39c12; --dark: #2c3e50; --bg: #eceff1; --white: #ffffff; --success: #27ae60; --error: #e74c3c; }
                 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
                 .app-card { width: 300px; background: var(--white); border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); overflow: hidden; position: relative; border: 1px solid #ccc; }
                 .header { background-color: var(--dark); color: white; padding: 20px; text-align: center; }
@@ -738,9 +739,9 @@ const OWNER_PAGE_HTML = `
                     </div>
                 </div>
                 <script>
-                    const APP_URL = "https://INDIRA-demo.netlify.app"; 
+                    const APP_URL = "https://Indira-demo.netlify.app"; 
                     window.onload = function() {
-                        const data = JSON.parse(localStorage.getItem('INDIRA_bridge_data') || '{}');
+                        const data = JSON.parse(localStorage.getItem('Indira_bridge_data') || '{}');
                         if(data.mining) { document.getElementById('val-header-title').innerText = data.mining; }
                         if(data.material) { document.getElementById('val-header-sub').innerText = data.material; }
                         
@@ -769,7 +770,7 @@ const OWNER_PAGE_HTML = `
                     };
 
                     function showDriverID() {
-                        const data = JSON.parse(localStorage.getItem('INDIRA_bridge_data') || '{}');
+                        const data = JSON.parse(localStorage.getItem('Indira_bridge_data') || '{}');
                         document.getElementById('id-name').innerText = data.driverName || 'Unknown Driver';
                         document.getElementById('id-license').innerText = 'License: ' + (data.driverLicense || 'N/A');
                         document.getElementById('id-phone').innerText = 'Phone: ' + (data.driverPhone || 'N/A');
@@ -781,12 +782,21 @@ const OWNER_PAGE_HTML = `
                         document.getElementById('id-overlay').style.display = 'none';
                     }
 
-                    function startWorkflow() {
+                    function startWorkflow(mode) {
                         const overlay = document.getElementById('overlay');
                         const title = document.getElementById('title');
                         const message = document.getElementById('message');
                         const badgeArea = document.getElementById('badge-area');
                         overlay.style.display = 'flex';
+
+                        if (mode === 'late') {
+                            title.innerText = "Access Denied";
+                            message.innerText = "Late arrivals will be denied loading access. Lorry must are you at entry gate towards prayer to schedule time.";
+                            badgeArea.innerHTML = '<div class="badge" style="background:var(--error)">Denied</div>';
+                            setTimeout(() => { overlay.style.display = 'none'; }, 4000);
+                            return;
+                        }
+
                         title.innerText = "Gate Entry";
                         message.innerText = "Lorry entered site, needs loading";
                         badgeArea.innerHTML = '<div class="badge">At Site</div>';
@@ -822,7 +832,7 @@ const OWNER_PAGE_HTML = `
     }
 
     const last = db[0]; 
-    const freshMyTrips = JSON.parse(localStorage.getItem('INDIRA_my_trips')) || [];
+    const freshMyTrips = JSON.parse(localStorage.getItem('Indira_my_trips')) || [];
     const trip = freshMyTrips[0]; 
 
     const windowStr = `${last.startTime || '06:30'} - ${last.endTime || '18:00'}`;
@@ -867,7 +877,7 @@ const OWNER_PAGE_HTML = `
     }
 
     let linkedHTML = OWNER_PAGE_HTML.replace(
-        'const data = JSON.parse(localStorage.getItem(\'INDIRA_bridge_data\') || \'{}\');',
+        'const data = JSON.parse(localStorage.getItem(\'Indira_bridge_data\') || \'{}\');',
         `const data = ${JSON.stringify(bridgeData)};`
     );
 
@@ -895,9 +905,9 @@ const OWNER_PAGE_HTML = `
         const LEASE_DATA = [{ name: "Sri Kumaraswamy Mineral Exports (SKME) Pvt Ltd", id: "EA2141", type: "Iron Ore", status: "active", coords: [15.12, 76.65], isOurMine: true }];
         for(let i=2; i<=32; i++){ LEASE_DATA.push({ name: `Mining Lease Co ${i}`, id: `EA${2100+i}`, type: i%2==0?"Iron Ore":"Manganese", status: i%3==0?"active":i%3==1?"notified":"inactive", coords: [15.0 + Math.random()*0.3, 76.4 + Math.random()*0.4], isOurMine: false }); }
  
-        let db = JSON.parse(localStorage.getItem('INDIRA_final_db')) || [];
+        let db = JSON.parse(localStorage.getItem('Indira_final_db')) || [];
         // Confirmed-trip summaries shown on the Purchaser's "My Dispatches" page.
-        let myTrips = JSON.parse(localStorage.getItem('INDIRA_my_trips')) || [];
+        let myTrips = JSON.parse(localStorage.getItem('Indira_my_trips')) || [];
         let mapInstance = null, routeMapInstance = null, detailMapInstance = null, userRole = 'manager'; 
         let currentDetailIdx = null;
  
@@ -978,12 +988,15 @@ const OWNER_PAGE_HTML = `
                     <a href="#" onclick="openOwnerDetailsTab()" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800">
                         <i class="fa-solid fa-id-card w-5"></i> Lorry Owner Details
                     </a>
+                    <a href="#" onclick="showPage('fleet-status-2')" id="nav-fleet-2" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800">
+                        <i class="fa-solid fa-truck w-5"></i> Fleet Status (GPS Tracking)
+                    </a>
                 `;
                 showPage('admin');
             } else {
                 document.getElementById('user-profile').innerHTML = `<span class="bg-indigo-900/50 text-indigo-300 text-[10px] px-2 py-1 rounded-full font-bold uppercase border border-indigo-500/30">Lessy</span><p class="mt-2 font-semibold text-sm text-white">Lessy</p><p class="text-xs text-zinc-500">Ramgarhi Mining • EA2141</p>`;
                 document.getElementById('header-avatar').innerText = 'Lessy';
-                document.getElementById('main-nav').innerHTML = `<a href="#" onclick="showPage('overview')" id="nav-overview" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-white bg-zinc-800/50"><i class="fa-solid fa-chart-pie w-5"></i> Overview</a><a href="#" onclick="showPage('create')" id="nav-create" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-plus-circle w-5"></i> Create Dispatch</a><a href="#" onclick="showPage('all-dispatches')" id="nav-all" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-list-check w-5"></i> All Dispatches</a><a href="#" onclick="showPage('fleet-status')" id="nav-fleet" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck-front w-5"></i> Status</a><a href="#" onclick="showPage('fleet-status-2')" id="nav-fleet-2" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck w-5"></i> Fleet Status </a><a href="#" onclick="showPage('leases')" id="nav-leases" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-map-location-dot w-5"></i> Leases</a>`;
+                document.getElementById('main-nav').innerHTML = `<a href="#" onclick="showPage('overview')" id="nav-overview" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-white bg-zinc-800/50"><i class="fa-solid fa-chart-pie w-5"></i> Overview</a><a href="#" onclick="showPage('create')" id="nav-create" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-plus-circle w-5"></i> Create Dispatch</a><a href="#" onclick="showPage('all-dispatches')" id="nav-all" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-list-check w-5"></i> All Dispatches</a><a href="#" onclick="showPage('fleet-status')" id="nav-fleet" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck-front w-5"></i> Status</a><a href="#" onclick="showPage('leases')" id="nav-leases" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-map-location-dot w-5"></i> Leases</a>`;
                 showPage('overview');
             }
         }
@@ -1077,7 +1090,7 @@ const OWNER_PAGE_HTML = `
                 allocations: [] 
             };
             db.unshift(newDispatch);
-            localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
+            localStorage.setItem('Indira_final_db', JSON.stringify(db));
             updateStats();
             document.getElementById('done-site').innerText = newDispatch.miningSite;
             document.getElementById('done-slot').innerText = document.getElementById('f-slot').value;
@@ -1112,7 +1125,7 @@ const OWNER_PAGE_HTML = `
         function initRouteMap(dest) {
             if(routeMapInstance) { routeMapInstance.remove(); routeMapInstance = null; }
             routeMapInstance = L.map('route-map', { zoomControl: false }).setView([15.14, 76.75], 12);
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri — Esri, DeLorme, NAVTEQ', maxZoom: 19 }).addTo(routeMapInstance);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 19 }).addTo(routeMapInstance);
             const pickup = [15.10, 76.60], drop = dest.includes('Sandur') ? [15.25, 76.50] : [15.18, 76.85];
             L.circleMarker(pickup, { color: '#ef4444', radius: 6, fillOpacity: 1 }).addTo(routeMapInstance);
             L.circleMarker(drop, { color: '#22c55e', radius: 6, fillOpacity: 1 }).addTo(routeMapInstance);
@@ -1133,7 +1146,7 @@ const OWNER_PAGE_HTML = `
                     offer.timestamp = Date.now();
                 } else { offer.status = 'PARTIALLY_Sourced'; }
             } else { offer.status = 'CONFIRMED'; }
-            localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
+            localStorage.setItem('Indira_final_db', JSON.stringify(db));
             showPage('fleet-alloc');
             initFleetAllocation(amount, offer);
         }
@@ -1153,7 +1166,7 @@ const OWNER_PAGE_HTML = `
                     offer.currentBuyer = BUYER_QUEUE[offer.currentBuyerIndex];
                     offer.timestamp = Date.now();
                 } else { offer.status = 'FAILED'; }
-                localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
+                localStorage.setItem('Indira_final_db', JSON.stringify(db));
             }
             closeL_Modal();
             refreshBuyerIdentity(); 
@@ -1329,7 +1342,7 @@ const OWNER_PAGE_HTML = `
                 if(!dispatch.allocations) dispatch.allocations = [];
                 dispatch.allocations.push(allocationRecord);
                 dispatch.status = 'CONFIRMED';
-                localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
+                localStorage.setItem('Indira_final_db', JSON.stringify(db));
             }
 
             // Build the Trip Summary shown on "My Dispatches": mining site, material,
@@ -1359,7 +1372,7 @@ const OWNER_PAGE_HTML = `
                     confirmedAt: Date.now()
                 };
                 myTrips.unshift(tripSummary);
-                localStorage.setItem('INDIRA_my_trips', JSON.stringify(myTrips));
+                localStorage.setItem('Indira_my_trips', JSON.stringify(myTrips));
             }
 
             if(lorriesShort > 0) {
@@ -1563,7 +1576,7 @@ const OWNER_PAGE_HTML = `
             target.lorriesShort = Math.max(0, (target.lorriesShort || 0) - assignedCount);
             target.lorriesProvided = (target.lorriesProvided || 0) + assignedCount;
  
-            localStorage.setItem('INDIRA_final_db', JSON.stringify(db));
+            localStorage.setItem('Indira_final_db', JSON.stringify(db));
  
             // Notify each assigned owner with the same details entered on Create Dispatch.
             const windowLabel = `${item.startTime || '06:30'} - ${item.endTime || '18:00'}`;
@@ -1589,7 +1602,7 @@ const OWNER_PAGE_HTML = `
         function initDetailMap(item) {
             if(detailMapInstance) { detailMapInstance.remove(); detailMapInstance = null; }
             detailMapInstance = L.map('admin-detail-map', { zoomControl: false }).setView([15.13, 76.7], 11);
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri — Esri, DeLorme, NAVTEQ', maxZoom: 19 }).addTo(detailMapInstance);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 19 }).addTo(detailMapInstance);
             if(item.allocations) {
                 item.allocations.forEach(alc => {
                     const count = alc.trucks ? alc.trucks.length : 0;
@@ -1688,7 +1701,7 @@ const OWNER_PAGE_HTML = `
         function initFleetStatus2() {
             if(!fleet2MapInstance) {
                 fleet2MapInstance = L.map('fleet2-gps-map', { zoomControl: false }).setView(FLEET2_BASE, 7);
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri — Esri, DeLorme, NAVTEQ', maxZoom: 19 }).addTo(fleet2MapInstance);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors © CARTO' }).addTo(fleet2MapInstance);
                 FLEET2_DRIVERS.forEach(d => {
                     const icon = L.divIcon({
                         className: 'fleet2-vehicle-marker',
@@ -1710,7 +1723,7 @@ const OWNER_PAGE_HTML = `
             if (logsContainer.querySelector('p.italic')) logsContainer.innerHTML = '';
 
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const msg = `🚨 *URGENT: INDIRA ALERT* 🚨%0A%0A*Truck No:* ${driver.truck}%0A*Violation:* Overspeeding (${driver.speed} km/h)%0A*Route:* ${driver.from} → ${driver.to}%0A%0A_Sent via INDIRA Monitoring System_`;
+            const msg = `🚨 *URGENT: Indira ALERT* 🚨%0A%0A*Truck No:* ${driver.truck}%0A*Violation:* Overspeeding (${driver.speed} km/h)%0A*Route:* ${driver.from} → ${driver.to}%0A%0A_Sent via Indira Monitoring System_`;
             const whatsappLink = `https://wa.me/${POLICE_PHONE_NUMBER}?text=${msg}`;
 
             const alertEntry = document.createElement('div');
@@ -1866,7 +1879,7 @@ const OWNER_PAGE_HTML = `
         function initLeaseMap() {
             if(mapInstance) return;
             mapInstance = L.map('map', { zoomControl: false }).setView([15.1394, 76.8877], 11);
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri — Esri, DeLorme, NAVTEQ', maxZoom: 19 }).addTo(mapInstance);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 19 }).addTo(mapInstance);
             LEASE_DATA.forEach(lease => {
                 let dotColor = lease.status === 'active' ? '#22c55e' : lease.status === 'notified' ? '#eab308' : '#ef4444';
                 let radius = lease.isOurMine ? 10 : 6;
@@ -1895,7 +1908,6 @@ document.getElementById('main-nav').innerHTML = `
     <a href="#" onclick="showPage('create')" id="nav-create" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-plus-circle w-5"></i> Create Dispatch</a>
     <a href="#" onclick="showPage('all-dispatches')" id="nav-all" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-list-check w-5"></i> All Dispatches</a>
     <a href="#" onclick="showPage('fleet-status')" id="nav-fleet" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck-front w-5"></i> Status</a>
-    <a href="#" onclick="showPage('fleet-status-2')" id="nav-fleet-2" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-truck w-5"></i> Fleet Status (GPS Tracking)</a>
     <a href="#" onclick="showPage('leases')" id="nav-leases" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-map-location-dot w-5"></i> Leases</a>`;
             showPage('overview');
         };
