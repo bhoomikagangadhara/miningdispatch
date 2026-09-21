@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indira | Enterprise Logistics - Final Version</title>
+    <title>ORETRACK | Enterprise Logistics - Final Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -44,7 +44,7 @@
         <aside id="sidebar" class="sidebar sidebar-closed md:translate-x-0 fixed md:relative w-72 h-full border-r border-zinc-800 flex flex-col bg-[#0f0f0f]">
             <div class="p-6 flex items-center gap-3 border-b border-zinc-800">
                 <div class="bg-yellow-600 p-2 rounded text-black font-bold text-xs">📦</div>
-                <h1 class="text-lg font-bold tracking-widest text-white">Indira</h1>
+                <h1 class="text-lg font-bold tracking-widest text-white">ORETRACK</h1>
                 <button onclick="toggleMenu()" class="md:hidden ml-auto text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div id="user-profile" class="px-6 py-6"></div>
@@ -95,7 +95,7 @@
                             <div class="bg-zinc-900/50 p-4 rounded-xl mb-6 border border-zinc-800">
                                 <div class="flex items-center gap-3 mb-2"><div class="bg-yellow-900/20 p-2 rounded text-yellow-500"><i class="fa-solid fa-box"></i></div><p class="text-[10px] text-zinc-500 uppercase">Mining Site *</p></div>
                                 <select id="f-mining-site" onchange="onMiningSiteChange()" class="input-field w-full p-2.5 rounded-lg text-sm required">
-                                  
+                                    <option value="">Select mining site</option>
                                       <option value="">Select mining site</option>
                                     <option value="NMDC C-Block">NMDC C-Block</option>
                                     <option value="Tunga Mining">Tunga Mines</option>
@@ -739,9 +739,9 @@ const OWNER_PAGE_HTML = `
                     </div>
                 </div>
                 <script>
-                    const APP_URL = "https://Indira-demo.netlify.app"; 
+                    const APP_URL = "https://oretrack-demo.netlify.app"; 
                     window.onload = function() {
-                        const data = JSON.parse(localStorage.getItem('Indira_bridge_data') || '{}');
+                        const data = JSON.parse(localStorage.getItem('oretrack_bridge_data') || '{}');
                         if(data.mining) { document.getElementById('val-header-title').innerText = data.mining; }
                         if(data.material) { document.getElementById('val-header-sub').innerText = data.material; }
                         
@@ -770,7 +770,7 @@ const OWNER_PAGE_HTML = `
                     };
 
                     function showDriverID() {
-                        const data = JSON.parse(localStorage.getItem('Indira_bridge_data') || '{}');
+                        const data = JSON.parse(localStorage.getItem('oretrack_bridge_data') || '{}');
                         document.getElementById('id-name').innerText = data.driverName || 'Unknown Driver';
                         document.getElementById('id-license').innerText = 'License: ' + (data.driverLicense || 'N/A');
                         document.getElementById('id-phone').innerText = 'Phone: ' + (data.driverPhone || 'N/A');
@@ -823,7 +823,7 @@ const OWNER_PAGE_HTML = `
     }
 
     const last = db[0]; 
-    const freshMyTrips = JSON.parse(localStorage.getItem('Indira_my_trips')) || [];
+    const freshMyTrips = JSON.parse(localStorage.getItem('oretrack_my_trips')) || [];
     const trip = freshMyTrips[0]; 
 
     const windowStr = `${last.startTime || '06:30'} - ${last.endTime || '18:00'}`;
@@ -868,7 +868,7 @@ const OWNER_PAGE_HTML = `
     }
 
     let linkedHTML = OWNER_PAGE_HTML.replace(
-        'const data = JSON.parse(localStorage.getItem(\'Indira_bridge_data\') || \'{}\');',
+        'const data = JSON.parse(localStorage.getItem(\'oretrack_bridge_data\') || \'{}\');',
         `const data = ${JSON.stringify(bridgeData)};`
     );
 
@@ -896,9 +896,9 @@ const OWNER_PAGE_HTML = `
         const LEASE_DATA = [{ name: "Sri Kumaraswamy Mineral Exports (SKME) Pvt Ltd", id: "EA2141", type: "Iron Ore", status: "active", coords: [15.12, 76.65], isOurMine: true }];
         for(let i=2; i<=32; i++){ LEASE_DATA.push({ name: `Mining Lease Co ${i}`, id: `EA${2100+i}`, type: i%2==0?"Iron Ore":"Manganese", status: i%3==0?"active":i%3==1?"notified":"inactive", coords: [15.0 + Math.random()*0.3, 76.4 + Math.random()*0.4], isOurMine: false }); }
  
-        let db = JSON.parse(localStorage.getItem('Indira_final_db')) || [];
+        let db = JSON.parse(localStorage.getItem('oretrack_final_db')) || [];
         // Confirmed-trip summaries shown on the Purchaser's "My Dispatches" page.
-        let myTrips = JSON.parse(localStorage.getItem('Indira_my_trips')) || [];
+        let myTrips = JSON.parse(localStorage.getItem('oretrack_my_trips')) || [];
         let mapInstance = null, routeMapInstance = null, detailMapInstance = null, userRole = 'manager'; 
         let currentDetailIdx = null;
  
@@ -1078,7 +1078,7 @@ const OWNER_PAGE_HTML = `
                 allocations: [] 
             };
             db.unshift(newDispatch);
-            localStorage.setItem('Indira_final_db', JSON.stringify(db));
+            localStorage.setItem('oretrack_final_db', JSON.stringify(db));
             updateStats();
             document.getElementById('done-site').innerText = newDispatch.miningSite;
             document.getElementById('done-slot').innerText = document.getElementById('f-slot').value;
@@ -1113,7 +1113,7 @@ const OWNER_PAGE_HTML = `
         function initRouteMap(dest) {
             if(routeMapInstance) { routeMapInstance.remove(); routeMapInstance = null; }
             routeMapInstance = L.map('route-map', { zoomControl: false }).setView([15.14, 76.75], 12);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 19 }).addTo(routeMapInstance);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri — Esri, DeLorme, NAVTEQ', maxZoom: 19 }).addTo(routeMapInstance);
             const pickup = [15.10, 76.60], drop = dest.includes('Sandur') ? [15.25, 76.50] : [15.18, 76.85];
             L.circleMarker(pickup, { color: '#ef4444', radius: 6, fillOpacity: 1 }).addTo(routeMapInstance);
             L.circleMarker(drop, { color: '#22c55e', radius: 6, fillOpacity: 1 }).addTo(routeMapInstance);
@@ -1134,7 +1134,7 @@ const OWNER_PAGE_HTML = `
                     offer.timestamp = Date.now();
                 } else { offer.status = 'PARTIALLY_Sourced'; }
             } else { offer.status = 'CONFIRMED'; }
-            localStorage.setItem('Indira_final_db', JSON.stringify(db));
+            localStorage.setItem('oretrack_final_db', JSON.stringify(db));
             showPage('fleet-alloc');
             initFleetAllocation(amount, offer);
         }
@@ -1154,7 +1154,7 @@ const OWNER_PAGE_HTML = `
                     offer.currentBuyer = BUYER_QUEUE[offer.currentBuyerIndex];
                     offer.timestamp = Date.now();
                 } else { offer.status = 'FAILED'; }
-                localStorage.setItem('Indira_final_db', JSON.stringify(db));
+                localStorage.setItem('oretrack_final_db', JSON.stringify(db));
             }
             closeL_Modal();
             refreshBuyerIdentity(); 
@@ -1330,7 +1330,7 @@ const OWNER_PAGE_HTML = `
                 if(!dispatch.allocations) dispatch.allocations = [];
                 dispatch.allocations.push(allocationRecord);
                 dispatch.status = 'CONFIRMED';
-                localStorage.setItem('Indira_final_db', JSON.stringify(db));
+                localStorage.setItem('oretrack_final_db', JSON.stringify(db));
             }
 
             // Build the Trip Summary shown on "My Dispatches": mining site, material,
@@ -1360,7 +1360,7 @@ const OWNER_PAGE_HTML = `
                     confirmedAt: Date.now()
                 };
                 myTrips.unshift(tripSummary);
-                localStorage.setItem('Indira_my_trips', JSON.stringify(myTrips));
+                localStorage.setItem('oretrack_my_trips', JSON.stringify(myTrips));
             }
 
             if(lorriesShort > 0) {
@@ -1564,7 +1564,7 @@ const OWNER_PAGE_HTML = `
             target.lorriesShort = Math.max(0, (target.lorriesShort || 0) - assignedCount);
             target.lorriesProvided = (target.lorriesProvided || 0) + assignedCount;
  
-            localStorage.setItem('Indira_final_db', JSON.stringify(db));
+            localStorage.setItem('oretrack_final_db', JSON.stringify(db));
  
             // Notify each assigned owner with the same details entered on Create Dispatch.
             const windowLabel = `${item.startTime || '06:30'} - ${item.endTime || '18:00'}`;
@@ -1590,7 +1590,7 @@ const OWNER_PAGE_HTML = `
         function initDetailMap(item) {
             if(detailMapInstance) { detailMapInstance.remove(); detailMapInstance = null; }
             detailMapInstance = L.map('admin-detail-map', { zoomControl: false }).setView([15.13, 76.7], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 19 }).addTo(detailMapInstance);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri — Esri, DeLorme, NAVTEQ', maxZoom: 19 }).addTo(detailMapInstance);
             if(item.allocations) {
                 item.allocations.forEach(alc => {
                     const count = alc.trucks ? alc.trucks.length : 0;
@@ -1689,7 +1689,7 @@ const OWNER_PAGE_HTML = `
         function initFleetStatus2() {
             if(!fleet2MapInstance) {
                 fleet2MapInstance = L.map('fleet2-gps-map', { zoomControl: false }).setView(FLEET2_BASE, 7);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors © CARTO' }).addTo(fleet2MapInstance);
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri — Esri, DeLorme, NAVTEQ', maxZoom: 19 }).addTo(fleet2MapInstance);
                 FLEET2_DRIVERS.forEach(d => {
                     const icon = L.divIcon({
                         className: 'fleet2-vehicle-marker',
@@ -1711,7 +1711,7 @@ const OWNER_PAGE_HTML = `
             if (logsContainer.querySelector('p.italic')) logsContainer.innerHTML = '';
 
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const msg = `🚨 *URGENT: Indira ALERT* 🚨%0A%0A*Truck No:* ${driver.truck}%0A*Violation:* Overspeeding (${driver.speed} km/h)%0A*Route:* ${driver.from} → ${driver.to}%0A%0A_Sent via Indira Monitoring System_`;
+            const msg = `🚨 *URGENT: ORETRACK ALERT* 🚨%0A%0A*Truck No:* ${driver.truck}%0A*Violation:* Overspeeding (${driver.speed} km/h)%0A*Route:* ${driver.from} → ${driver.to}%0A%0A_Sent via ORETRACK Monitoring System_`;
             const whatsappLink = `https://wa.me/${POLICE_PHONE_NUMBER}?text=${msg}`;
 
             const alertEntry = document.createElement('div');
@@ -1867,7 +1867,7 @@ const OWNER_PAGE_HTML = `
         function initLeaseMap() {
             if(mapInstance) return;
             mapInstance = L.map('map', { zoomControl: false }).setView([15.1394, 76.8877], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap contributors © CARTO', maxZoom: 19 }).addTo(mapInstance);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri — Esri, DeLorme, NAVTEQ', maxZoom: 19 }).addTo(mapInstance);
             LEASE_DATA.forEach(lease => {
                 let dotColor = lease.status === 'active' ? '#22c55e' : lease.status === 'notified' ? '#eab308' : '#ef4444';
                 let radius = lease.isOurMine ? 10 : 6;
