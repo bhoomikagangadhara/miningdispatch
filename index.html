@@ -697,6 +697,7 @@ const OWNER_PAGE_HTML = `
                         <div class="row"><span class="label">Drop Location</span><span class="value" id="val-trip-delivery">---</span></div>
                         <div class="row"><span class="label">Material Type</span><span class="value" id="val-trip-material">---</span></div>
                         <div class="row"><span class="label">Grade</span><span class="value" id="val-trip-grade">---</span></div>
+                        <div class="row"><span class="label">Rate per Ton</span><span class="value" id="val-trip-rate">---</span></div>
                        <div class="row"><span class="label">Trip Schedule Date & Time</span><span class="value" id="val-trip-schedule">---</span></div>
                         <div class="row" style="border:none;"><span class="label">Lorry Number</span><span class="value" id="val-trip-lorry-number">---</span></div>
                     </div>
@@ -753,10 +754,11 @@ const OWNER_PAGE_HTML = `
                             document.getElementById('val-trip-delivery').innerText = data.tripDelivery || '---';
                             document.getElementById('val-trip-material').innerText = data.tripMaterial || '---';
                             document.getElementById('val-trip-grade').innerText = data.tripGrade || '---';
+                            document.getElementById('val-trip-rate').innerText = data.tripRate || '---';
                             document.getElementById('val-trip-schedule').innerText = data.tripSchedule || '---';
                             document.getElementById('val-trip-lorry-number').innerText = data.lorryNumber || '---';
                         } else {
-                            ['val-trip-mining','val-trip-pickup','val-trip-material','val-trip-grade','val-trip-delivery','val-trip-schedule','val-trip-qty','val-trip-amount','val-trip-lorry-number'].forEach(id => {
+                            ['val-trip-mining','val-trip-pickup','val-trip-material','val-trip-grade','val-trip-rate','val-trip-delivery','val-trip-schedule','val-trip-qty','val-trip-amount','val-trip-lorry-number'].forEach(id => {
                                 const el = document.getElementById(id);
                                 if(el) el.innerText = 'No trip confirmed yet';
                             });
@@ -868,6 +870,7 @@ const OWNER_PAGE_HTML = `
         bridgeData.tripMining = trip.miningSite;
         bridgeData.tripMaterial = trip.material;
         bridgeData.tripGrade = trip.grade || last.grade || 'N/A';
+        bridgeData.tripRate = trip.ratePerTon > 0 ? `₹${trip.ratePerTon} / T` : 'Not set';
         bridgeData.tripDelivery = trip.deliveryLocation;
         bridgeData.tripSchedule = `${trip.scheduleDate || ''} ${trip.scheduleWindow ? '(' + trip.scheduleWindow + ')' : ''}`.trim();
         bridgeData.tripQty = `${trip.purchaseQty} T`;
@@ -1902,7 +1905,9 @@ const OWNER_PAGE_HTML = `
             setInterval(moveFleet2Vehicles, 150);
             userRole = 'manager';
             document.getElementById('role-text').innerText = 'Switch to PURCHASER View';
-       
+            document.getElementById('user-profile').innerHTML = `<span class="bg-indigo-900/50 text-indigo-300 text-[10px] px-2 py-1 rounded-full font-bold uppercase border border-indigo-500/30">Lessy</span><p class="mt-2 font-semibold text-sm text-white">Lessy</p><p class="text-xs text-zinc-500">Ramgarhi Mining • EA2141</p>`;
+            document.getElementById('header-avatar').innerText = 'Lessy';
+
 document.getElementById('main-nav').innerHTML = `
     <a href="#" onclick="showPage('overview')" id="nav-overview" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-white bg-zinc-800/50"><i class="fa-solid fa-chart-pie w-5"></i> Overview</a>
     <a href="#" onclick="showPage('create')" id="nav-create" class="flex items-center gap-3 p-3 rounded-lg text-sm transition-all text-zinc-400 hover:text-white hover:bg-zinc-800"><i class="fa-solid fa-plus-circle w-5"></i> Create Dispatch</a>
